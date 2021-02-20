@@ -32,8 +32,36 @@
 
 <body>
 
+    <!-- Static navbar -->
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">STANLEY</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="work.html">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
 
 <div class="container-fluid main-container">
+
+<div class="fluid-row" id="header">
+
+<h1 class="title toc-ignore">Food Orders Preparation Time Prediction</h1>
+
+</div>
+
 
 <div id="intro" class="section level2">
 <h2>Intro</h2>
@@ -293,16 +321,49 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<!-- +++++ Footer Section +++++ -->
+	
+	<div id="footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4">
+					<h4>My Pad</h4>
+					<p>London, UK.</p>
+				</div><!-- /col-lg-4 -->
+				
+				<div class="col-lg-4">
+					<h4>My Links</h4>
+					<p>
+						<a href="https://www.github.com/chewingumex">GitHub</a><br/>
+						<a href="https://www.linkedin.com/in/jondavidoff">LinkedIn</a><br/>
+					</p>
+				</div><!-- /col-lg-4 -->
+				
+				<div class="col-lg-4">
+					<h4>My Good Cause</h4>
+					<p><a href="https://www.doctorswithoutborders.org/">doctorswithoutborders.org</a></p>
+				</div><!-- /col-lg-4 -->
+			
+			</div>
+		
+		</div>
+	</div>
+	
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/bootstrap.min.js"></script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+	<script>
+	  (function () {
+	    var script = document.createElement("script");
+	    script.type = "text/javascript";
+	    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	    document.getElementsByTagName("head")[0].appendChild(script);
+	  })();
+	</script>
 
 </body>
 </html>

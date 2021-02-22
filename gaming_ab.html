@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
-    <title>Wham-Bam Studios A/B Test </title>
+    <title>>Wham-Bam Studios: A/B Test Analysis </title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -30,33 +30,23 @@
     <![endif]-->
   </head>
 
-    <!-- Static navbar -->
-    <div class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html">MY DATA SCIENCE PORTFOLIO</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="work.html">Work</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </div>
+<body>
 
-<body style="background-color:white;">
 
-  <div class="col-lg-8 col-lg-offset-2">
-        <h1 class="title toc-ignore">Wham-Bam Studios A/B Test</h1>
- <!-- </div> -->
-<div class="container">
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Wham-Bam Studios: A/B Test Analysis</h1>
+
+</div>
+
+
 <div id="intro" class="section level2">
 <h2>Intro</h2>
 <p>Wham-Bam Studios, a gaming design agency for mobile, ran an A/B test from May 21 to July 31 which aimed at testing whether an experimental feature has a significant impact on Lifetime Value of the user (LTV). Wham-Bam monetises its games by showing ads to users as they play on.</p>
@@ -256,9 +246,218 @@ LTV_analysis &lt;- activity %&gt;%
   mutate(daily_user_rev = total_rev / as.numeric(span)) %&gt;%
   drop_na
 
-kable(head(LTV_analysis), format = &quot;latex&quot;, booktabs = TRUE) %&gt;%
-  kable_styling(latex_options = &quot;scale_down&quot;)</code></pre>
-
+head(LTV_analysis) %&gt;% 
+   kbl() %&gt;%
+      kable_styling(latex_options = &quot;scale_down&quot;)</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+user_id
+</th>
+<th style="text-align:right;">
+group
+</th>
+<th style="text-align:left;">
+from
+</th>
+<th style="text-align:left;">
+to
+</th>
+<th style="text-align:left;">
+span
+</th>
+<th style="text-align:right;">
+gamerounds
+</th>
+<th style="text-align:right;">
+ads
+</th>
+<th style="text-align:right;">
+total_rev
+</th>
+<th style="text-align:right;">
+daily_user_rev
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0022378896c5b59edc4b06efc90a6f28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+2020-07-07
+</td>
+<td style="text-align:left;">
+2020-07-31
+</td>
+<td style="text-align:left;">
+24 days
+</td>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+0.2003482
+</td>
+<td style="text-align:right;">
+0.0083478
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+002b6e9e77c690474e4ab11626905474
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+2020-07-10
+</td>
+<td style="text-align:left;">
+2020-07-29
+</td>
+<td style="text-align:left;">
+19 days
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+229
+</td>
+<td style="text-align:right;">
+0.4155494
+</td>
+<td style="text-align:right;">
+0.0218710
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+003634b1222540243b1778d072d082b4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+2020-05-26
+</td>
+<td style="text-align:left;">
+2020-07-30
+</td>
+<td style="text-align:left;">
+65 days
+</td>
+<td style="text-align:right;">
+61
+</td>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+0.3272338
+</td>
+<td style="text-align:right;">
+0.0050344
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+003945b41d8a37602fa07872bd5591ca
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+2020-06-06
+</td>
+<td style="text-align:left;">
+2020-07-26
+</td>
+<td style="text-align:left;">
+50 days
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+613
+</td>
+<td style="text-align:right;">
+1.1135936
+</td>
+<td style="text-align:right;">
+0.0222719
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+00472b8f1e70baa484b35af59ae0c7dd
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+2020-06-24
+</td>
+<td style="text-align:left;">
+2020-07-27
+</td>
+<td style="text-align:left;">
+33 days
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+187
+</td>
+<td style="text-align:right;">
+0.3400454
+</td>
+<td style="text-align:right;">
+0.0103044
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0052c89b8965ba57845ad9fb15f0b6fd
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2020-07-17
+</td>
+<td style="text-align:left;">
+2020-07-27
+</td>
+<td style="text-align:left;">
+10 days
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+96
+</td>
+<td style="text-align:right;">
+0.1743908
+</td>
+<td style="text-align:right;">
+0.0174391
+</td>
+</tr>
+</tbody>
+</table>
 <p>Based on this data, comparisons on different criteria of LTV can be examined: time spent playing, gamerounds played, ads seen and total revenue. For this comparison, outliers (i.e. 1069 users from both groups who played a really high number of gamerounds) were removed to examine both groups more objectively:</p>
 <pre class="r"><code>par(mar = c(4, 4, .1, .1))
 
@@ -424,11 +623,10 @@ LTV_model %&gt;%
   unique %&gt;% 
   mutate(ad_rate = ads/as.numeric(time_span))
 
-
-head(glm_data2) %&gt;%
-  kbl() %&gt;%
-   kable_classic_2(full_width = F)</code></pre>
-<table class=" lightable-classic-2" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+head(glm_data2) %&gt;% 
+   kbl() %&gt;%
+      kable_styling(latex_options = &quot;striped&quot;)</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -856,33 +1054,33 @@ $(document).ready(function () {
 <!-- code folding -->
 
 <!-- +++++ Footer Section +++++ -->
-	
-	<div id="footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4">
-					<h4>My Pad</h4>
-					<p>London, UK.</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Links</h4>
-					<p>
-						<a href="https://www.github.com/chewingumex">GitHub</a><br/>
-						<a href="https://www.linkedin.com/in/jondavidoff">LinkedIn</a><br/>
-					</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Good Cause</h4>
-					<p><a href="https://www.doctorswithoutborders.org/">doctorswithoutborders.org</a></p>
-				</div><!-- /col-lg-4 -->
-			
-			</div>
-		
-		</div>
-	</div>
-	
+  
+  <div id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h4>My Pad</h4>
+          <p>London, UK.</p>
+        </div><!-- /col-lg-4 -->
+        
+        <div class="col-lg-4">
+          <h4>My Links</h4>
+          <p>
+            <a href="https://www.github.com/chewingumex">GitHub</a><br/>
+            <a href="https://www.linkedin.com/in/jondavidoff">LinkedIn</a><br/>
+          </p>
+        </div><!-- /col-lg-4 -->
+        
+        <div class="col-lg-4">
+          <h4>My Good Cause</h4>
+          <p><a href="https://www.doctorswithoutborders.org/">doctorswithoutborders.org</a></p>
+        </div><!-- /col-lg-4 -->
+      
+      </div>
+    
+    </div>
+  </div>
+  
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -890,15 +1088,14 @@ $(document).ready(function () {
     <script src="assets/js/bootstrap.min.js"></script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
-	<script>
-	  (function () {
-	    var script = document.createElement("script");
-	    script.type = "text/javascript";
-	    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-	    document.getElementsByTagName("head")[0].appendChild(script);
-	  })();
-	</script>
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
 
 </body>
 </html>
-

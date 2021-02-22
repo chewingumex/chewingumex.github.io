@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
-    <title>>Wham-Bam Studios: A/B Test Analysis </title>
+    <title>Wham-Bam Studios: A/B Test Analysis </title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -32,23 +32,37 @@
 
 <body>
 
+    <!-- Static navbar -->
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">MY DATA SCIENCE PORTFOLIO</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="work.html">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
 
-<div class="container-fluid main-container">
-
-
-
-
-<div class="fluid-row" id="header">
-
-
-
-<h1 class="title toc-ignore">Wham-Bam Studios: A/B Test Analysis</h1>
-
-</div>
-
-
-<div id="intro" class="section level2">
+  <div class="col-lg-8 col-lg-offset-2">
+        <h1 class="title toc-ignore">Wham-Bam Studios: A/B Test Analysis</h1>
+ <!-- </div> -->
+  <div class="container">
+  <div id="intro" class="section level2">
+  <br>
+  <br>
+  <br>
 <h2>Intro</h2>
+  <br>
 <p>Wham-Bam Studios, a gaming design agency for mobile, ran an A/B test from May 21 to July 31 which aimed at testing whether an experimental feature has a significant impact on Lifetime Value of the user (LTV). Wham-Bam monetises its games by showing ads to users as they play on.</p>
 <p>There is a perfect correlation between gamerounds and median number of ads seen. The more gamerounds played, the more time spent playing, the more ad impressions and therefore the more valuable a user.</p>
 <pre class="r"><code>### read in csv files

@@ -1,0 +1,90 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.03"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="#060a0f"/>
+
+  <!-- Grid -->
+  <line x1="70" y1="80"  x2="70"  y2="500" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="70" y1="500" x2="748" y2="500" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="70" y1="140" x2="748" y2="140" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="70" y1="205" x2="748" y2="205" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="70" y1="270" x2="748" y2="270" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="70" y1="335" x2="748" y2="335" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="70" y1="400" x2="748" y2="400" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="70" y1="465" x2="748" y2="465" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="200" y1="80" x2="200" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="330" y1="80" x2="330" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="460" y1="80" x2="460" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="590" y1="80" x2="590" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+
+  <!-- Confidence band around regression line -->
+  <path d="M70,460 L180,420 L290,380 L390,340 L490,295 L590,255 L680,215 L748,182
+           L748,162 L680,195 L590,235 L490,275 L390,320 L290,360 L180,400 L70,440 Z"
+        fill="url(#band)"/>
+
+  <!-- Scatter dots (amber, food orders) -->
+  <circle cx="95"  cy="468" r="3.5" fill="#f59e0b" opacity="0.75"/>
+  <circle cx="112" cy="445" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="128" cy="458" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="148" cy="435" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="162" cy="415" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="178" cy="428" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="195" cy="400" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="215" cy="388" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="230" cy="410" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="250" cy="375" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="265" cy="355" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="285" cy="390" r="3.5" fill="#f59e0b" opacity="0.75"/>
+  <circle cx="300" cy="360" r="4"   fill="#f59e0b" opacity="0.8"/>
+  <circle cx="320" cy="345" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="340" cy="330" r="3.5" fill="#f59e0b" opacity="0.85"/>
+  <circle cx="358" cy="355" r="4"   fill="#f59e0b" opacity="0.8"/>
+  <circle cx="375" cy="318" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="395" cy="300" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="415" cy="328" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="435" cy="290" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="450" cy="275" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="470" cy="310" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="490" cy="260" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="505" cy="280" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="525" cy="248" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="545" cy="235" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="560" cy="265" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="578" cy="242" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="598" cy="225" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="615" cy="210" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="635" cy="235" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="652" cy="195" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="670" cy="210" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="692" cy="185" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="710" cy="175" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="730" cy="190" r="3.5" fill="#f59e0b" opacity="0.8"/>
+
+  <!-- Regression line (cyan) -->
+  <line x1="70" y1="450" x2="748" y2="172" stroke="#00e5ff" stroke-width="2.5" stroke-opacity="0.9"/>
+
+  <!-- Axis tick labels -->
+  <text x="70"  y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">1</text>
+  <text x="200" y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">3</text>
+  <text x="330" y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">5</text>
+  <text x="460" y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">7</text>
+  <text x="590" y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">9</text>
+  <text x="748" y="520" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">11</text>
+
+  <!-- Axis labels -->
+  <text x="409" y="550" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle">ITEMS IN ORDER →</text>
+  <text x="28" y="295" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle" transform="rotate(-90 28 295)">PREP TIME (min) →</text>
+
+  <!-- R² annotation -->
+  <rect x="610" y="88" width="130" height="36" rx="3" fill="#0b1219" stroke="#1c2840" stroke-width="1"/>
+  <text x="620" y="102" fill="#4a5a78" font-size="9" font-family="monospace">R² = 0.847</text>
+  <text x="620" y="116" fill="#4a5a78" font-size="9" font-family="monospace">p &lt; 0.001</text>
+
+  <!-- Title -->
+  <text x="70" y="46" fill="#3a4a68" font-size="10" font-family="monospace" letter-spacing="3">PREP TIME PREDICTION · LINEAR REGRESSION</text>
+</svg>

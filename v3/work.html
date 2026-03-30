@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · Work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .filter-bar {
+      position: relative; z-index: 1;
+      padding: 2rem 3rem; border-bottom: 1px solid var(--border);
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+    }
+    .filter-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-right: 0.5rem; }
+    .filter-btn {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.45rem 1rem; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; border-radius: 2px;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    .work-section { position: relative; z-index: 1; padding: 5rem 3rem; }
+    .work-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+    .work-card {
+      background: var(--bg); position: relative; overflow: hidden;
+      aspect-ratio: 4/3; display: flex; flex-direction: column; justify-content: flex-end;
+      text-decoration: none; transition: background 0.3s;
+    }
+    .work-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+      z-index: 1; transition: opacity 0.3s;
+    }
+    .work-card:hover::before { opacity: 0.7; }
+    .work-img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.55) saturate(0.75); transition: filter 0.5s, transform 0.5s;
+    }
+    .work-card:hover .work-img { filter: brightness(0.9) saturate(1.1); transform: scale(1.06); }
+    .work-info { position: relative; z-index: 2; padding: 1.5rem; }
+    .work-tag { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+    .work-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text); line-height: 1.3; margin-bottom: 0.5rem; }
+    .work-desc {
+      font-size: 0.82rem; color: rgba(205,214,244,0.55); font-weight: 300; line-height: 1.5;
+      max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+    }
+    .work-card:hover .work-desc { max-height: 80px; }
+    .work-arrow {
+      position: absolute; top: 1rem; right: 1rem; z-index: 2;
+      width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 0.8rem;
+      opacity: 0; transform: translateY(4px); transition: all 0.3s;
+    }
+    .work-card:hover .work-arrow { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .filter-bar { padding: 1.5rem; }
+      .work-section { padding: 3rem 1.5rem; }
+      .work-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 550px) {
+      .work-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html" class="active">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header-section">
+    <p class="page-eyebrow">// Selected Work</p>
+    <h1>Eleven <span class="outline">projects.</span><br>One dataset at a time.</h1>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="classification">Classification</button>
+    <button class="filter-btn" data-filter="time-series">Time Series</button>
+    <button class="filter-btn" data-filter="clustering">Clustering</button>
+    <button class="filter-btn" data-filter="analytics">Analytics</button>
+    <button class="filter-btn" data-filter="experimentation">Experimentation</button>
+    <button class="filter-btn" data-filter="nlp">NLP / AI</button>
+  </div>
+
+  <section class="work-section">
+    <div class="work-grid" id="workGrid">
+
+      <a class="work-card" href="iccmx.html" data-tags="analytics time-series">
+        <img class="work-img" src="img/iccmx.svg" alt="Consumer Confidence">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Economics · Mexico</div>
+          <div class="work-title">Índice de Confianza del Consumidor</div>
+          <div class="work-desc">Analysis of Mexico's consumer confidence index — trends, Google Trends correlation, and interactive visualisations.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="film_segmentation.html" data-tags="clustering">
+        <img class="work-img" src="img/film_segmentation.svg" alt="Film Segmentation">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Clustering · Entertainment</div>
+          <div class="work-title">Films Rating Segmentation</div>
+          <div class="work-desc">K-means clustering on film ratings to identify distinct audience segments and genre groupings.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="food_prep.html" data-tags="classification">
+        <img class="work-img" src="img/food_prep.svg" alt="Food Orders">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Regression · Operations</div>
+          <div class="work-title">Food Orders Prep Time Prediction</div>
+          <div class="work-desc">Predicting food preparation time from order characteristics to optimise kitchen operations.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="transactions_forecast.html" data-tags="time-series">
+        <img class="work-img" src="img/transactions_forecast.svg" alt="Transactions Forecast">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Time Series · Finance</div>
+          <div class="work-title">Transactions Forecast</div>
+          <div class="work-desc">ARIMA and exponential smoothing to forecast transaction volumes for financial planning.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="churn.html" data-tags="classification">
+        <img class="work-img" src="img/churn.svg" alt="Customer Churn">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Classification · CRM</div>
+          <div class="work-title">Customer Churn Prediction</div>
+          <div class="work-desc">Identifying at-risk customers using Random Forest and threshold optimisation.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="covid.html" data-tags="analytics">
+        <img class="work-img" src="img/covid.svg" alt="COVID Analytics">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Analytics · Public Health</div>
+          <div class="work-title">COVID-19 Analytics</div>
+          <div class="work-desc">UK NHS &amp; ONS epidemiological analysis — spread, mortality, and community risk profiling.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="credit_risk.html" data-tags="classification">
+        <img class="work-img" src="img/credit_risk.svg" alt="Credit Risk">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Risk Modelling · Finance</div>
+          <div class="work-title">Risk of Credit Default</div>
+          <div class="work-desc">Scorecard development to predict probability of loan default using logistic regression.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="gaming_ab.html" data-tags="experimentation">
+        <img class="work-img" src="img/gaming_ab.svg" alt="Gaming AB Test">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Experimentation · Gaming</div>
+          <div class="work-title">Gaming A/B Test</div>
+          <div class="work-desc">End-to-end A/B test analysis — power analysis, hypothesis testing, and retention metrics.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="generative_ai.html" data-tags="nlp analytics">
+        <img class="work-img" src="img/generative_ai.svg" alt="Generative AI">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">NLP · Generative AI</div>
+          <div class="work-title">Generative AI &amp; Transformers</div>
+          <div class="work-desc">ARTy — an LSTM + Attention pipeline generating synthetic brand insights from reviews and news at scale.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="audience_targeting.html" data-tags="clustering analytics">
+        <img class="work-img" src="img/audience_targeting.svg" alt="Audience Targeting">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Segmentation · AdTech</div>
+          <div class="work-title">Psychographic Audience Targeting</div>
+          <div class="work-desc">Geographical psychographic segmentation of the UK using postcode and cookie data for digital targeting.</div>
+        </div>
+      </a>
+
+      <a class="work-card" href="lecturing.html" data-tags="education analytics">
+        <img class="work-img" src="img/lecturing.svg" alt="Lecturing">
+        <div class="work-arrow">↗</div>
+        <div class="work-info">
+          <div class="work-tag">Education · ITESM</div>
+          <div class="work-title">Applied ML Lecturing</div>
+          <div class="work-desc">Lecturer in Business Intelligence at ITESM Campus Sta Fe — teaching ML applied to real business problems.</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2025 JD · Data Science Portfolio · London &amp; Mexico City</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.work-card').forEach(card => {
+          card.style.display = (filter === 'all' || card.dataset.tags.includes(filter)) ? 'flex' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

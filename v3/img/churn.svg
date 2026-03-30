@@ -1,0 +1,88 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bell-a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="bell-b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="overlap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="#060a0f"/>
+
+  <!-- Grid -->
+  <line x1="60" y1="80"  x2="60"  y2="490" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="60" y1="490" x2="748" y2="490" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="60" y1="150" x2="748" y2="150" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="250" x2="748" y2="250" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="350" x2="748" y2="350" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="435" x2="748" y2="435" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+
+  <!-- Bell A fill (retained, cyan, centered ~280) -->
+  <path d="M60,460 C100,458 150,455 190,440 C230,425 250,350 280,250 C310,150 330,118 280,118 C230,118 250,150 280,250 C310,350 330,425 370,440 C410,455 450,458 520,460 Z"
+        fill="url(#bell-a)"/>
+
+  <!-- Bell A fill refined (proper bell shape) -->
+  <path d="M60,460 C120,458 165,450 200,430 C235,410 255,340 280,240
+           C285,218 288,118 280,118 C272,118 275,218 280,240
+           C305,340 325,410 360,430 C395,450 440,458 500,460 Z"
+        fill="url(#bell-a)"/>
+
+  <!-- Bell B fill (churned, purple, centered ~490) -->
+  <path d="M260,460 C330,458 375,450 415,425 C450,400 470,330 490,215
+           C495,190 498,128 490,128 C482,128 485,190 490,215
+           C510,330 530,400 565,425 C600,450 650,458 720,460 Z"
+        fill="url(#bell-b)"/>
+
+  <!-- Overlap zone -->
+  <path d="M360,460 C375,458 390,450 415,425 C450,400 470,330 490,215
+           C495,190 498,128 490,128 C482,128 485,190 490,215
+           C470,330 450,400 415,425 C395,450 380,458 360,460 Z"
+        fill="url(#overlap)" opacity="0.6"/>
+
+  <!-- Bell A outline (cyan) -->
+  <path d="M60,460 C120,458 165,450 200,430 C235,410 255,340 280,240
+           C285,218 288,118 280,118 C272,118 275,218 280,240
+           C305,340 325,410 360,430 C395,450 440,458 500,460"
+        fill="none" stroke="#00e5ff" stroke-width="2"/>
+
+  <!-- Bell B outline (purple) -->
+  <path d="M260,460 C330,458 375,450 415,425 C450,400 470,330 490,215
+           C495,190 498,128 490,128 C482,128 485,190 490,215
+           C510,330 530,400 565,425 C600,450 650,458 720,460"
+        fill="none" stroke="#7b61ff" stroke-width="2"/>
+
+  <!-- Decision threshold line -->
+  <line x1="398" y1="90" x2="398" y2="490" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4" stroke-opacity="0.8"/>
+  <text x="404" y="104" fill="#f59e0b" font-size="9" font-family="monospace" opacity="0.8">THRESHOLD</text>
+
+  <!-- Labels -->
+  <text x="185" y="108" fill="#00e5ff" font-size="10" font-family="monospace" opacity="0.75" text-anchor="middle">RETAINED</text>
+  <text x="510" y="118" fill="#7b61ff" font-size="10" font-family="monospace" opacity="0.75" text-anchor="middle">CHURNED</text>
+
+  <!-- Confusion area labels -->
+  <text x="298" y="360" fill="#3a4a68" font-size="9" font-family="monospace" text-anchor="middle">TRUE</text>
+  <text x="298" y="373" fill="#3a4a68" font-size="9" font-family="monospace" text-anchor="middle">NEG</text>
+  <text x="470" y="360" fill="#3a4a68" font-size="9" font-family="monospace" text-anchor="middle">TRUE</text>
+  <text x="470" y="373" fill="#3a4a68" font-size="9" font-family="monospace" text-anchor="middle">POS</text>
+
+  <!-- Metric panel -->
+  <rect x="562" y="118" width="168" height="80" rx="3" fill="#0b1219" stroke="#1c2840" stroke-width="1"/>
+  <text x="572" y="136" fill="#4a5a78" font-size="9" font-family="monospace">RANDOM FOREST</text>
+  <text x="572" y="152" fill="#4a5a78" font-size="9" font-family="monospace">ACCURACY  94.8%</text>
+  <text x="572" y="168" fill="#4a5a78" font-size="9" font-family="monospace">ROC AUC   0.972</text>
+  <text x="572" y="184" fill="#4a5a78" font-size="9" font-family="monospace">F1 SCORE  0.931</text>
+
+  <!-- Axis label -->
+  <text x="404" y="530" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle">PREDICTED CHURN PROBABILITY →</text>
+  <text x="28" y="295" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle" transform="rotate(-90 28 295)">DENSITY →</text>
+
+  <!-- Title -->
+  <text x="60" y="46" fill="#3a4a68" font-size="10" font-family="monospace" letter-spacing="3">CUSTOMER CHURN · CLASSIFICATION MODEL</text>
+</svg>

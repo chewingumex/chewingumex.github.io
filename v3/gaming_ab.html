@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · Gaming A/B Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .project-body { position: relative; z-index: 1; padding: 5rem 3rem; max-width: 900px; }
+    .project-meta { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 4rem; }
+    .meta-cell { background: var(--surface); padding: 1.25rem 1.75rem; flex: 1; }
+    .meta-cell-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
+    .meta-cell-value { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--white); }
+    .project-desc { font-size: 1.05rem; color: var(--text); line-height: 1.9; font-weight: 300; margin-bottom: 2rem; }
+    .highlights { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 3rem; }
+    .highlights li { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); padding: 0.6rem 0.9rem; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; gap: 0.5rem; }
+    .highlights li::before { content: '▸'; color: var(--accent); font-size: 0.65rem; }
+    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .back-link { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; display: block; transition: color 0.2s; margin-bottom: 3rem; }
+    .back-link:hover { color: var(--accent); }
+    @media (max-width: 900px) { .project-body { padding: 3rem 1.5rem; } .project-meta { flex-direction: column; } .highlights { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html" class="active">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header-section">
+    <p class="page-eyebrow">// Experimentation · Statistics</p>
+    <h1>Gaming<br><span class="outline">A/B Test</span></h1>
+  </div>
+
+  <div class="project-body">
+    <a href="work.html" class="back-link">← Back to all work</a>
+
+    <div class="project-meta fade-up">
+      <div class="meta-cell">
+        <div class="meta-cell-label">Domain</div>
+        <div class="meta-cell-value">Gaming · Product Analytics</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Methods</div>
+        <div class="meta-cell-value">Hypothesis Testing · Power Analysis</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Language</div>
+        <div class="meta-cell-value">R</div>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <p class="section-label">// Overview</p>
+      <p class="project-desc">
+        End-to-end A/B test analysis evaluating the impact of a gameplay feature change on player retention. The project covers power analysis and sample size determination upfront, then applies t-tests and bootstrap methods to evaluate statistical significance. Effect sizes, p-value interpretation, and actionable product recommendations are all addressed.
+      </p>
+
+      <p class="section-label">// Highlights</p>
+      <ul class="highlights">
+        <li>Power analysis &amp; sample sizing</li>
+        <li>t-tests (Welch's)</li>
+        <li>Bootstrap confidence intervals</li>
+        <li>Effect size (Cohen's d)</li>
+        <li>Retention metric analysis</li>
+        <li>Product recommendations</li>
+      </ul>
+
+      <div class="cta-row">
+        <a href="gaming_ab_full_version.html" target="_blank" class="btn btn-primary">Open full analysis ↗</a>
+        <a href="work.html" class="btn btn-ghost">← All projects</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2025 JD · Data Science Portfolio · London &amp; Mexico City</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+</body>
+</html>

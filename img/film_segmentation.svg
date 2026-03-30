@@ -1,0 +1,95 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="cl-a" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cl-b" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cl-c" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="#060a0f"/>
+
+  <!-- Grid -->
+  <line x1="60" y1="80"  x2="60"  y2="520" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="520" x2="748" y2="520" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="80"  x2="748" y2="80"  stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="190" x2="748" y2="190" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="300" x2="748" y2="300" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="60" y1="410" x2="748" y2="410" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="184" y1="80" x2="184" y2="520" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="308" y1="80" x2="308" y2="520" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="432" y1="80" x2="432" y2="520" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="556" y1="80" x2="556" y2="520" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="680" y1="80" x2="680" y2="520" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+
+  <!-- Cluster A halo (cyan, top-left) -->
+  <ellipse cx="200" cy="210" rx="110" ry="100" fill="url(#cl-a)"/>
+  <ellipse cx="200" cy="210" rx="110" ry="100" fill="none" stroke="#00e5ff" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+
+  <!-- Cluster B halo (purple, bottom-center) -->
+  <ellipse cx="450" cy="385" rx="120" ry="90" fill="url(#cl-b)"/>
+  <ellipse cx="450" cy="385" rx="120" ry="90" fill="none" stroke="#7b61ff" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+
+  <!-- Cluster C halo (amber, top-right) -->
+  <ellipse cx="630" cy="180" rx="95" ry="85" fill="url(#cl-c)"/>
+  <ellipse cx="630" cy="180" rx="95" ry="85" fill="none" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+
+  <!-- Cluster A dots (cyan) -->
+  <circle cx="155" cy="195" r="4" fill="#00e5ff" opacity="0.85"/>
+  <circle cx="172" cy="165" r="3" fill="#00e5ff" opacity="0.7"/>
+  <circle cx="195" cy="180" r="4.5" fill="#00e5ff" opacity="0.9"/>
+  <circle cx="218" cy="170" r="3" fill="#00e5ff" opacity="0.75"/>
+  <circle cx="160" cy="225" r="3.5" fill="#00e5ff" opacity="0.8"/>
+  <circle cx="190" cy="240" r="4" fill="#00e5ff" opacity="0.85"/>
+  <circle cx="222" cy="225" r="3" fill="#00e5ff" opacity="0.7"/>
+  <circle cx="175" cy="205" r="3.5" fill="#00e5ff" opacity="0.8"/>
+  <circle cx="208" cy="200" r="4" fill="#00e5ff" opacity="0.9"/>
+  <circle cx="145" cy="215" r="3" fill="#00e5ff" opacity="0.65"/>
+  <circle cx="235" cy="195" r="3.5" fill="#00e5ff" opacity="0.75"/>
+  <circle cx="200" cy="155" r="3" fill="#00e5ff" opacity="0.7"/>
+
+  <!-- Cluster B dots (purple) -->
+  <circle cx="418" cy="365" r="4"   fill="#7b61ff" opacity="0.85"/>
+  <circle cx="440" cy="345" r="3.5" fill="#7b61ff" opacity="0.8"/>
+  <circle cx="465" cy="360" r="4"   fill="#7b61ff" opacity="0.9"/>
+  <circle cx="430" cy="390" r="3"   fill="#7b61ff" opacity="0.7"/>
+  <circle cx="460" cy="405" r="4.5" fill="#7b61ff" opacity="0.85"/>
+  <circle cx="490" cy="380" r="3.5" fill="#7b61ff" opacity="0.8"/>
+  <circle cx="448" cy="415" r="3"   fill="#7b61ff" opacity="0.7"/>
+  <circle cx="478" cy="355" r="4"   fill="#7b61ff" opacity="0.85"/>
+  <circle cx="410" cy="400" r="3"   fill="#7b61ff" opacity="0.75"/>
+  <circle cx="500" cy="395" r="3.5" fill="#7b61ff" opacity="0.8"/>
+  <circle cx="455" cy="375" r="4"   fill="#7b61ff" opacity="0.9"/>
+  <circle cx="425" cy="420" r="3"   fill="#7b61ff" opacity="0.65"/>
+
+  <!-- Cluster C dots (amber) -->
+  <circle cx="598" cy="165" r="3.5" fill="#f59e0b" opacity="0.85"/>
+  <circle cx="618" cy="150" r="4"   fill="#f59e0b" opacity="0.9"/>
+  <circle cx="640" cy="168" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="608" cy="185" r="4"   fill="#f59e0b" opacity="0.85"/>
+  <circle cx="635" cy="190" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="618" cy="172" r="4.5" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="595" cy="185" r="3"   fill="#f59e0b" opacity="0.7"/>
+  <circle cx="650" cy="158" r="3.5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="625" cy="200" r="3"   fill="#f59e0b" opacity="0.75"/>
+  <circle cx="660" cy="178" r="4"   fill="#f59e0b" opacity="0.85"/>
+
+  <!-- Cluster labels -->
+  <text x="148" cy="140" x1="148" y1="140" y="140" fill="#00e5ff" font-size="10" font-family="monospace" opacity="0.6">CLUSTER A</text>
+  <text x="405" y="450" fill="#7b61ff" font-size="10" font-family="monospace" opacity="0.6">CLUSTER B</text>
+  <text x="585" y="132" fill="#f59e0b" font-size="10" font-family="monospace" opacity="0.6">CLUSTER C</text>
+
+  <!-- Axis labels -->
+  <text x="370" y="550" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle">IMDb RATING →</text>
+  <text x="30" y="305" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle" transform="rotate(-90 30 305)">VOTES →</text>
+
+  <!-- Title -->
+  <text x="60" y="46" fill="#3a4a68" font-size="10" font-family="monospace" letter-spacing="3">RATINGS SEGMENTATION · K-MEANS CLUSTERING</text>
+</svg>

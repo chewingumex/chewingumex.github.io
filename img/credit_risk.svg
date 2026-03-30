@@ -1,0 +1,68 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="auc-fill" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="#060a0f"/>
+
+  <!-- Plot border -->
+  <line x1="80" y1="80"  x2="80"  y2="500" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="80" y1="500" x2="720" y2="500" stroke="#2a3854" stroke-width="1.5"/>
+  <line x1="80" y1="80"  x2="720" y2="80"  stroke="#1c2840" stroke-width="0.5"/>
+  <line x1="720" y1="80" x2="720" y2="500" stroke="#1c2840" stroke-width="0.5"/>
+
+  <!-- Grid -->
+  <line x1="80" y1="164" x2="720" y2="164" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="80" y1="248" x2="720" y2="248" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="80" y1="332" x2="720" y2="332" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="80" y1="416" x2="720" y2="416" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="240" y1="80" x2="240" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="400" y1="80" x2="400" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+  <line x1="560" y1="80" x2="560" y2="500" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,5"/>
+
+  <!-- Reference diagonal (random classifier) -->
+  <line x1="80" y1="500" x2="720" y2="80" stroke="#3a4a68" stroke-width="1.5" stroke-dasharray="5,4" stroke-opacity="0.6"/>
+  <text x="370" y="320" fill="#3a4a68" font-size="9" font-family="monospace" opacity="0.5" transform="rotate(-33 370 320)">RANDOM CLASSIFIER</text>
+
+  <!-- AUC fill area -->
+  <path d="M80,500 C80,420 90,310 130,235 C170,160 220,105 310,90
+           C400,78 500,80 600,80 C660,80 700,80 720,80 L720,500 Z"
+        fill="url(#auc-fill)"/>
+
+  <!-- ROC curve (cyan) -->
+  <path d="M80,500 C80,420 90,310 130,235 C170,160 220,105 310,90
+           C400,78 500,80 600,80 C660,80 700,80 720,80"
+        fill="none" stroke="#00e5ff" stroke-width="3"/>
+
+  <!-- Optimal operating point -->
+  <circle cx="190" cy="105" r="6" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="190" cy="105" r="3" fill="#f59e0b"/>
+  <line x1="190" y1="115" x2="240" y2="145" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.7"/>
+  <rect x="245" y="134" width="138" height="26" rx="2" fill="#0b1219" stroke="#1c2840" stroke-width="1"/>
+  <text x="255" y="151" fill="#f59e0b" font-size="9" font-family="monospace">OPTIMAL THRESHOLD</text>
+
+  <!-- Axis labels -->
+  <text x="400" y="535" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle">FALSE POSITIVE RATE →</text>
+  <text x="30" y="295" fill="#3a4a68" font-size="10" font-family="monospace" text-anchor="middle" transform="rotate(-90 30 295)">TRUE POSITIVE RATE →</text>
+
+  <!-- Axis ticks -->
+  <text x="80"  y="518" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">0</text>
+  <text x="240" y="518" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">0.25</text>
+  <text x="400" y="518" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">0.50</text>
+  <text x="560" y="518" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">0.75</text>
+  <text x="720" y="518" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="middle">1.0</text>
+  <text x="66" y="504" fill="#2a3854" font-size="9" font-family="monospace" text-anchor="end">0</text>
+  <text x="66" y="84"  fill="#2a3854" font-size="9" font-family="monospace" text-anchor="end">1</text>
+
+  <!-- AUC annotation box -->
+  <rect x="490" y="200" width="212" height="66" rx="3" fill="#0b1219" stroke="#1c2840" stroke-width="1"/>
+  <text x="500" y="218" fill="#00e5ff"  font-size="11" font-family="monospace" font-weight="bold">AUC = 0.942</text>
+  <text x="500" y="236" fill="#4a5a78"  font-size="9"  font-family="monospace">LOGISTIC REGRESSION</text>
+  <text x="500" y="252" fill="#4a5a78"  font-size="9"  font-family="monospace">GINI COEFFICIENT: 0.884</text>
+
+  <!-- Title -->
+  <text x="80" y="46" fill="#3a4a68" font-size="10" font-family="monospace" letter-spacing="3">CREDIT DEFAULT · ROC CURVE ANALYSIS</text>
+</svg>

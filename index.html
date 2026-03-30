@@ -1,147 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · Data Science Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 6rem 3rem 4rem; overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.2em;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 40px; height: 1px; background: var(--accent); }
+    h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3rem, 7vw, 6rem); line-height: 1.0;
+      color: var(--white); letter-spacing: -0.02em;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+    h1 .accent-word { color: var(--accent); }
+    h1 .dim-word { color: var(--muted); }
+    .hero-desc {
+      margin-top: 2rem; font-size: 1.1rem; color: var(--muted);
+      max-width: 520px; line-height: 1.8;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-cta {
+      margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+    .stats-bar {
+      display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px;
+      overflow: hidden; margin-top: 4rem; background: var(--surface);
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+    .stat { flex: 1; padding: 1.5rem 2rem; border-right: 1px solid var(--border); text-align: center; }
+    .stat:last-child { border-right: none; }
+    .stat-number { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.78rem; color: var(--muted); font-family: 'DM Mono', monospace; letter-spacing: 0.1em; }
 
-    <title>JD's Data Science</title>
+    /* ── PROJECTS ── */
+    section { position: relative; z-index: 1; padding: 6rem 3rem; }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    }
+    .project-card {
+      background: var(--card-bg); padding: 2rem;
+      text-decoration: none; display: flex; flex-direction: column; gap: 1rem;
+      transition: background 0.2s; position: relative; overflow: hidden;
+    }
+    .project-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,229,255,0.04), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .project-card:hover { background: var(--surface); }
+    .project-card:hover::after { opacity: 1; }
+    .project-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--white); line-height: 1.3; }
+    .project-arrow {
+      margin-top: auto; font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.1em; color: var(--muted);
+      display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s, gap 0.2s;
+    }
+    .project-card:hover .project-arrow { color: var(--accent); gap: 0.7rem; }
 
-    <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+    }
+    .about-text p { color: var(--text); line-height: 1.9; margin-bottom: 1.2rem; font-weight: 300; }
+    .skills-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; list-style: none; }
+    .skills-list li {
+      font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted);
+      padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .skills-list li::before { content: '▸'; color: var(--accent); font-size: 0.65rem; }
 
+    /* ── LINKS PANEL ── */
+    .links-panel { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .link-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text); transition: background 0.2s, color 0.2s; font-size: 0.95rem;
+    }
+    .link-row:last-child { border-bottom: none; }
+    .link-row:hover { background: var(--surface); color: var(--accent); }
+    .link-row-icon { color: var(--muted); font-size: 1.2rem; transition: color 0.2s; }
+    .link-row:hover .link-row-icon { color: var(--accent); }
+    .cause-box {
+      margin-top: 2rem; padding: 1.5rem;
+      border: 1px solid rgba(0,229,255,0.15); border-radius: 8px;
+      background: rgba(0,229,255,0.03);
+    }
+    .cause-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .cause-box a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; font-size: 0.95rem; }
+    .cause-box a:hover { color: var(--accent); }
 
-    <!-- Custom styles for this template -->
-    <link href="assets/css/main.css" rel="stylesheet">
+    @media (max-width: 768px) {
+      .hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .about-strip { grid-template-columns: 1fr; gap: 2.5rem; }
+      .stats-bar { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
 
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="assets/js/hover.zoom.js"></script>
-    <script src="assets/js/hover.zoom.conf.js"></script>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-  </head>
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
 
-  <body>
-
-    <!-- Static navbar -->
-    <div class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html">JD'S DATA SCIENCE PORTFOLIO</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Lead Data Scientist · PhD · London &amp; Mexico City</div>
+      <h1>
+        Making data<br>
+        <span class="accent-word">tell stories</span><br>
+        <span class="dim-word">worth hearing.</span>
+      </h1>
+      <p class="hero-desc">
+        Welcome to Planet JD — a portfolio spanning machine learning, generative AI, audience targeting, forecasting, and experimentation. Built across FinTech, AdTech, Market Research and beyond. Explore the work, share the code, start a conversation.
+      </p>
+      <div class="hero-cta">
+        <a href="work.html" class="btn btn-primary">View Projects →</a>
+        <a href="https://www.linkedin.com/in/jondoff/" target="_blank" class="btn btn-ghost">Let's connect</a>
+      </div>
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-number">11</span>
+          <span class="stat-label">Projects</span>
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="work.html">Work</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
+        <div class="stat">
+          <span class="stat-number">ML</span>
+          <span class="stat-label">+ GenAI + Analytics</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">∞</span>
+          <span class="stat-label">Questions</span>
+        </div>
       </div>
     </div>
+  </section>
 
-	<!-- +++++ Welcome Section +++++ -->
-	<div id="ww">
-	    <div class="container">
-			<div class="row">
-				<div class="col-lg-8 col-lg-offset-2 centered">
-					<img src="assets/img/planet_jd.png" alt="">
-					<h1>Welcome to Planet JD</h1>
-					<p>Below you'll find a few examples of some of the work I've been doing. I hope you find it interesting and it sparks a conversation between us.</p>
-					<p>In each project you'll find a bit of an intro, some data viz, modelling work and some questions for future iterations. Feel free to share the code or make your suggestions for improvement. Thanks for stopping by!</p>
-				</div><!-- /col-lg-8 -->
-			</div><!-- /row -->
-	    </div> <!-- /container -->
-	</div><!-- /ww -->
-	
-	
-	<!-- +++++ Projects Section +++++ -->
-		
-	<div class="container pt">
-		<div class="row mt centered">	
-			<div class="col-lg-4">
-				<a class="zoom green" href="iccmx.html"><img class="img-responsive" src="assets/img/portfolio/consumer.png" alt="" /></a>
-				<p>Indice de Confianza del Consumidor - México</p>
-			</div>
-			<div class="col-lg-4">
-				<a class="zoom green" href="film_segmentation.html"><img class="img-responsive" src="assets/img/portfolio/movies.png" alt="" /></a>
-				<p>Films Rating Segmentation</p>
-			</div>
-			<div class="col-lg-4">
-				<a class="zoom green" href="food_prep.html"><img class="img-responsive" src="assets/img/portfolio/food_orders.png" alt="" /></a>
-				<p>Food Orders Prep Time Prediction</p>
-			</div>
-			</div><!-- /row -->
-			<div class="row mt centered">
-			<div class="col-lg-4">
-				<a class="zoom green" href="transactions_forecast.html"><img class="img-responsive" src="assets/img/portfolio/transactions_forecast.png" alt="" /></a>
-				<p>Transactions Forecast</p>
-		 </div>	
-			<div class="col-lg-4">
-				<a class="zoom green" href="churn.html"><img class="img-responsive" src="assets/img/portfolio/churn.png" alt="" /></a>
-				<p>Customer Churn</p>
-			</div>
-			<div class="col-lg-4">
-				<a class="zoom green" href="covid.html"><img class="img-responsive" src="assets/img/portfolio/covid.png" alt="" /></a>
-				<p>COVID-19 Analytics</p>
-			</div>
-			</div><!-- /row -->
-			<div class="row mt centered">
-			<div class="col-lg-4">
-				<a class="zoom green" href="credit_risk.html"><img class="img-responsive" src="assets/img/portfolio/loans.png" alt="" /></a>
-				<p>Risk of Credit Default</p>
-			</div>
-			<div class="col-lg-4">
-				<a class="zoom green" href="gaming_ab.html"><img class="img-responsive" src="assets/img/portfolio/gaming_ab.png" alt="" /></a>
-				<p>Gaming A/B Test</p>
-			</div>
-		</div><!-- /row -->
-	</div><!-- /container -->
-	
-	
-	<!-- +++++ Footer Section +++++ -->
-	
-	<div id="footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4">
-					<h4>My Pad</h4>
-					<p>London, UK.</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Links</h4>
-					<p>
-						<a href="https://www.github.com/chewingumex">GitHub</a><br/>
-						<a href="https://www.linkedin.com/in/jondavidoff">LinkedIn</a><br/>
-					</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Good Cause</h4>
-					<p><a href="https://www.doctorswithoutborders.org/">doctorswithoutborders.org</a></p>
-				</div><!-- /col-lg-4 -->
-			
-			</div>
-		
-		</div>
-	</div>
-	
+  <div class="section-divider"></div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="assets/js/bootstrap.min.js"></script>
-  </body>
+  <!-- WORK -->
+  <section id="work">
+    <div class="section-label">/ 01 — Selected Work</div>
+    <h2 class="section-title">Projects</h2>
+    <p class="section-sub">Each project includes data exploration, visualisations, modelling, and open questions. Fork away.</p>
+
+    <div class="projects-grid fade-up">
+      <a class="project-card" href="iccmx.html">
+        <span class="project-tag">EDA · Time Series</span>
+        <span class="project-title">Índice de Confianza del Consumidor — México</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="film_segmentation.html">
+        <span class="project-tag">Clustering · EDA</span>
+        <span class="project-title">Films Rating Segmentation</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="food_prep.html">
+        <span class="project-tag">Regression · Prediction</span>
+        <span class="project-title">Food Orders Prep Time Prediction</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="transactions_forecast.html">
+        <span class="project-tag">Forecasting · Time Series</span>
+        <span class="project-title">Transactions Forecast</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="churn.html">
+        <span class="project-tag">Classification · ML</span>
+        <span class="project-title">Customer Churn Prediction</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="covid.html">
+        <span class="project-tag">Analytics · Visualisation</span>
+        <span class="project-title">COVID-19 Analytics</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="credit_risk.html">
+        <span class="project-tag">Risk Modelling · Classification</span>
+        <span class="project-title">Risk of Credit Default</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="gaming_ab.html">
+        <span class="project-tag">A/B Testing · Statistics</span>
+        <span class="project-title">Gaming A/B Test</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="generative_ai.html">
+        <span class="project-tag">NLP · Generative AI</span>
+        <span class="project-title">Generative AI &amp; Transformers (ARTy)</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="audience_targeting.html">
+        <span class="project-tag">Segmentation · AdTech</span>
+        <span class="project-title">Psychographic Audience Targeting</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+      <a class="project-card" href="lecturing.html">
+        <span class="project-tag">Education · ITESM</span>
+        <span class="project-title">Applied ML Lecturing</span>
+        <span class="project-arrow">View project →</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ABOUT STRIP -->
+  <section id="about">
+    <div class="section-label">/ 02 — Background</div>
+    <h2 class="section-title">About</h2>
+    <div class="about-strip fade-up">
+      <div class="about-text">
+        <p>I'm JD — a Lead Data Scientist and team leader based in London &amp; Mexico City, with a PhD from UCL and a background in psychology. I've led DS teams at HSBC, Warner Music Group, and Freemavens, and built ML solutions across FinTech, AdTech, FMCG, and Market Research. I also lecture Applied ML at ITESM.</p>
+        <p>I believe good data science is as much about asking the right questions as it is about the models you build.</p>
+        <div class="cause-box">
+          <div class="cause-label">Good Cause</div>
+          <a href="https://www.doctorswithoutborders.org/" target="_blank">Doctors Without Borders / MSF →</a>
+        </div>
+        <div style="margin-top:2rem;">
+          <a href="about.html" class="btn btn-ghost">Full bio →</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Domains &amp; Tools</p>
+        <ul class="skills-list">
+          <li>Machine Learning</li>
+          <li>Generative AI · NLP</li>
+          <li>Time Series</li>
+          <li>A/B Testing</li>
+          <li>Classification</li>
+          <li>Clustering</li>
+          <li>Risk Modelling</li>
+          <li>Data Visualisation</li>
+          <li>Forecasting</li>
+          <li>Team Leadership</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label">/ 03 — Get in Touch</div>
+    <h2 class="section-title">Links</h2>
+    <p class="section-sub">Find me on these platforms or send a message directly.</p>
+
+    <div class="links-panel fade-up" style="max-width:560px;">
+      <a class="link-row" href="https://www.github.com/chewingumex" target="_blank">
+        <span>GitHub — chewingumex</span>
+        <span class="link-row-icon">↗</span>
+      </a>
+      <a class="link-row" href="https://www.linkedin.com/in/jondoff/" target="_blank">
+        <span>LinkedIn — jondoff</span>
+        <span class="link-row-icon">↗</span>
+      </a>
+      <a class="link-row" href="contact.html">
+        <span>Send a message</span>
+        <span class="link-row-icon">→</span>
+      </a>
+      <div class="link-row" style="cursor:default;">
+        <span style="color:var(--muted);">📍 London &amp; Mexico City</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>JD · Data Science Portfolio</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+</body>
 </html>

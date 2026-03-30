@@ -1,0 +1,159 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="hcyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hpurp" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hamber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hmuted" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#cdd6f4" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#cdd6f4" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Quadrant fills -->
+    <linearGradient id="q1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="q2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="q3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="q4" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#cdd6f4" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#cdd6f4" stop-opacity="0.01"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#060a0f"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+
+  <!-- Title -->
+  <text x="52" y="42" font-family="monospace" font-size="10" fill="#00e5ff" opacity="0.6" letter-spacing="3">// PSYCHOGRAPHIC AUDIENCE SEGMENTATION</text>
+
+  <!-- Plot area: x=80–720, y=68–520 -->
+  <!-- Axes -->
+  <line x1="80" y1="68" x2="80" y2="520" stroke="#1c2840" stroke-width="1.2"/>
+  <line x1="80" y1="520" x2="720" y2="520" stroke="#1c2840" stroke-width="1.2"/>
+  <!-- Mid-lines (quadrant dividers) -->
+  <line x1="400" y1="68" x2="400" y2="520" stroke="#1c2840" stroke-width="0.7" stroke-dasharray="4,4"/>
+  <line x1="80" y1="294" x2="720" y2="294" stroke="#1c2840" stroke-width="0.7" stroke-dasharray="4,4"/>
+
+  <!-- Axis labels -->
+  <text x="400" y="548" font-family="monospace" font-size="9" fill="#6a7a99" text-anchor="middle" letter-spacing="1">DIGITAL AFFINITY →</text>
+  <text x="38" y="294" font-family="monospace" font-size="9" fill="#6a7a99" text-anchor="middle" letter-spacing="1" transform="rotate(-90,38,294)">PURCHASE INTENT ↑</text>
+  <!-- Axis tick labels -->
+  <text x="80" y="534" font-family="monospace" font-size="8" fill="#6a7a99" text-anchor="middle">Low</text>
+  <text x="720" y="534" font-family="monospace" font-size="8" fill="#6a7a99" text-anchor="middle">High</text>
+  <text x="70" y="520" font-family="monospace" font-size="8" fill="#6a7a99" text-anchor="end">Low</text>
+  <text x="70" y="72" font-family="monospace" font-size="8" fill="#6a7a99" text-anchor="end">High</text>
+
+  <!-- Quadrant background fills -->
+  <rect x="400" y="68" width="320" height="226" fill="url(#q1)"/>
+  <rect x="80" y="68" width="320" height="226" fill="url(#q2)"/>
+  <rect x="80" y="294" width="320" height="226" fill="url(#q3)"/>
+  <rect x="400" y="294" width="320" height="226" fill="url(#q4)"/>
+
+  <!-- Quadrant labels -->
+  <text x="555" y="94" font-family="monospace" font-size="9" fill="#00e5ff" opacity="0.5" letter-spacing="1">PROGRESSIVES</text>
+  <text x="110" y="94" font-family="monospace" font-size="9" fill="#7b61ff" opacity="0.5" letter-spacing="1">ACHIEVERS</text>
+  <text x="110" y="510" font-family="monospace" font-size="9" fill="#f59e0b" opacity="0.5" letter-spacing="1">TRADITIONALISTS</text>
+  <text x="510" y="510" font-family="monospace" font-size="9" fill="#cdd6f4" opacity="0.4" letter-spacing="1">EXPLORERS</text>
+
+  <!-- ── PROGRESSIVES cluster (Q1: x>400, y<294) ── centroid ~(580,168) -->
+  <ellipse cx="580" cy="168" rx="90" ry="70" fill="url(#hcyan)"/>
+  <!-- dots -->
+  <circle cx="520" cy="130" r="5" fill="#00e5ff" opacity="0.8"/>
+  <circle cx="545" cy="112" r="4" fill="#00e5ff" opacity="0.7"/>
+  <circle cx="562" cy="148" r="6" fill="#00e5ff" opacity="0.9"/>
+  <circle cx="580" cy="125" r="4" fill="#00e5ff" opacity="0.65"/>
+  <circle cx="598" cy="155" r="5" fill="#00e5ff" opacity="0.8"/>
+  <circle cx="615" cy="138" r="4" fill="#00e5ff" opacity="0.7"/>
+  <circle cx="580" cy="175" r="7" fill="#00e5ff" opacity="0.95"/> <!-- centroid -->
+  <circle cx="610" cy="188" r="4" fill="#00e5ff" opacity="0.65"/>
+  <circle cx="555" cy="190" r="5" fill="#00e5ff" opacity="0.7"/>
+  <circle cx="640" cy="158" r="4" fill="#00e5ff" opacity="0.6"/>
+  <circle cx="660" cy="175" r="3" fill="#00e5ff" opacity="0.5"/>
+  <circle cx="530" cy="200" r="3" fill="#00e5ff" opacity="0.5"/>
+  <!-- centroid ring -->
+  <circle cx="580" cy="175" r="14" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+
+  <!-- ── ACHIEVERS cluster (Q2: x<400, y<294) ── centroid ~(210,165) -->
+  <ellipse cx="210" cy="165" rx="85" ry="72" fill="url(#hpurp)"/>
+  <circle cx="150" cy="128" r="4" fill="#7b61ff" opacity="0.7"/>
+  <circle cx="170" cy="112" r="5" fill="#7b61ff" opacity="0.8"/>
+  <circle cx="195" cy="135" r="6" fill="#7b61ff" opacity="0.9"/>
+  <circle cx="218" cy="118" r="4" fill="#7b61ff" opacity="0.65"/>
+  <circle cx="235" cy="152" r="5" fill="#7b61ff" opacity="0.8"/>
+  <circle cx="210" cy="162" r="7" fill="#7b61ff" opacity="0.95"/> <!-- centroid -->
+  <circle cx="248" cy="140" r="4" fill="#7b61ff" opacity="0.65"/>
+  <circle cx="178" cy="182" r="5" fill="#7b61ff" opacity="0.7"/>
+  <circle cx="262" cy="170" r="4" fill="#7b61ff" opacity="0.6"/>
+  <circle cx="145" cy="162" r="3" fill="#7b61ff" opacity="0.55"/>
+  <circle cx="225" cy="195" r="4" fill="#7b61ff" opacity="0.5"/>
+  <circle cx="185" cy="105" r="3" fill="#7b61ff" opacity="0.5"/>
+  <circle cx="210" cy="162" r="14" fill="none" stroke="#7b61ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+
+  <!-- ── TRADITIONALISTS cluster (Q3: x<400, y>294) ── centroid ~(180,415) -->
+  <ellipse cx="180" cy="415" rx="88" ry="72" fill="url(#hamber)"/>
+  <circle cx="108" cy="370" r="4" fill="#f59e0b" opacity="0.7"/>
+  <circle cx="132" cy="390" r="5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="155" cy="415" r="6" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="180" cy="400" r="4" fill="#f59e0b" opacity="0.65"/>
+  <circle cx="195" cy="430" r="5" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="180" cy="415" r="7" fill="#f59e0b" opacity="0.95"/> <!-- centroid -->
+  <circle cx="218" cy="405" r="4" fill="#f59e0b" opacity="0.65"/>
+  <circle cx="145" cy="448" r="5" fill="#f59e0b" opacity="0.7"/>
+  <circle cx="240" cy="430" r="4" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="118" cy="445" r="3" fill="#f59e0b" opacity="0.55"/>
+  <circle cx="200" cy="460" r="4" fill="#f59e0b" opacity="0.5"/>
+  <circle cx="165" cy="360" r="3" fill="#f59e0b" opacity="0.5"/>
+  <circle cx="180" cy="415" r="14" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+
+  <!-- ── EXPLORERS cluster (Q4: x>400, y>294) ── centroid ~(580,415) -->
+  <ellipse cx="580" cy="415" rx="85" ry="68" fill="url(#hmuted)"/>
+  <circle cx="498" cy="370" r="4" fill="#cdd6f4" opacity="0.55"/>
+  <circle cx="520" cy="390" r="5" fill="#cdd6f4" opacity="0.6"/>
+  <circle cx="555" cy="410" r="5" fill="#cdd6f4" opacity="0.7"/>
+  <circle cx="580" cy="390" r="4" fill="#cdd6f4" opacity="0.6"/>
+  <circle cx="600" cy="415" r="5" fill="#cdd6f4" opacity="0.65"/>
+  <circle cx="580" cy="415" r="6" fill="#cdd6f4" opacity="0.8"/> <!-- centroid -->
+  <circle cx="615" cy="398" r="4" fill="#cdd6f4" opacity="0.55"/>
+  <circle cx="545" cy="440" r="5" fill="#cdd6f4" opacity="0.6"/>
+  <circle cx="640" cy="432" r="4" fill="#cdd6f4" opacity="0.5"/>
+  <circle cx="660" cy="415" r="3" fill="#cdd6f4" opacity="0.45"/>
+  <circle cx="580" cy="415" r="14" fill="none" stroke="#cdd6f4" stroke-width="1" stroke-dasharray="3,3" opacity="0.35"/>
+
+  <!-- ── INFO PANEL ── -->
+  <rect x="460" y="300" width="260" height="110" rx="4" fill="rgba(14,21,32,0.9)" stroke="#1c2840" stroke-width="1"/>
+  <text x="476" y="322" font-family="monospace" font-size="8" fill="#6a7a99" letter-spacing="2">SEGMENTATION MODEL</text>
+  <text x="476" y="342" font-family="monospace" font-size="9" fill="#cdd6f4">UK Postcodes + Cookie Data</text>
+  <text x="476" y="358" font-family="monospace" font-size="9" fill="#cdd6f4">4 Psychographic Segments</text>
+  <text x="476" y="374" font-family="monospace" font-size="9" fill="#cdd6f4">Digital Billboard Targeting</text>
+  <text x="476" y="390" font-family="monospace" font-size="9" fill="#6a7a99">Nielsen Marketing Cloud</text>
+
+  <!-- ── LEGEND ── -->
+  <rect x="80" y="294" width="0" height="0"/> <!-- anchor -->
+  <circle cx="88" cy="548" r="5" fill="#00e5ff" opacity="0.8"/>
+  <text x="100" y="552" font-family="monospace" font-size="8" fill="#6a7a99">Progressives</text>
+  <circle cx="200" cy="548" r="5" fill="#7b61ff" opacity="0.8"/>
+  <text x="212" y="552" font-family="monospace" font-size="8" fill="#6a7a99">Achievers</text>
+  <circle cx="300" cy="548" r="5" fill="#f59e0b" opacity="0.8"/>
+  <text x="312" y="552" font-family="monospace" font-size="8" fill="#6a7a99">Traditionalists</text>
+  <circle cx="430" cy="548" r="5" fill="#cdd6f4" opacity="0.6"/>
+  <text x="442" y="552" font-family="monospace" font-size="8" fill="#6a7a99">Explorers</text>
+</svg>

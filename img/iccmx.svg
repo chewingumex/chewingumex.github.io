@@ -1,0 +1,83 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fill-a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fill-b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#060a0f"/>
+
+  <!-- Grid horizontals -->
+  <line x1="60" y1="120" x2="748" y2="120" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="200" x2="748" y2="200" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="280" x2="748" y2="280" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="360" x2="748" y2="360" stroke="#1c2840" stroke-width="1"/>
+  <line x1="60" y1="440" x2="748" y2="440" stroke="#1c2840" stroke-width="1"/>
+  <!-- Y axis -->
+  <line x1="60" y1="80" x2="60" y2="480" stroke="#2a3854" stroke-width="1.5"/>
+
+  <!-- Vertical ticks (year markers) -->
+  <line x1="178" y1="460" x2="178" y2="470" stroke="#2a3854" stroke-width="1"/>
+  <line x1="296" y1="460" x2="296" y2="470" stroke="#2a3854" stroke-width="1"/>
+  <line x1="414" y1="460" x2="414" y2="470" stroke="#2a3854" stroke-width="1"/>
+  <line x1="532" y1="460" x2="532" y2="470" stroke="#2a3854" stroke-width="1"/>
+  <line x1="650" y1="460" x2="650" y2="470" stroke="#2a3854" stroke-width="1"/>
+
+  <!-- Google Trends line (purple, secondary) -->
+  <path d="M60,380 C110,360 140,310 178,290 C220,265 240,330 296,310
+           C350,290 370,410 414,420 C455,430 480,310 532,270
+           C580,235 610,255 650,240 C690,225 720,220 748,210"
+        fill="none" stroke="#7b61ff" stroke-width="1.5" stroke-opacity="0.7"/>
+
+  <!-- Area under secondary -->
+  <path d="M60,380 C110,360 140,310 178,290 C220,265 240,330 296,310
+           C350,290 370,410 414,420 C455,430 480,310 532,270
+           C580,235 610,255 650,240 C690,225 720,220 748,210 L748,460 L60,460 Z"
+        fill="url(#fill-b)"/>
+
+  <!-- ICCMX line (cyan, primary) -->
+  <path d="M60,350 C100,300 130,260 178,250 C225,240 250,370 296,380
+           C340,390 365,195 414,190 C460,185 480,340 532,330
+           C575,320 600,440 650,420 C695,400 720,225 748,215"
+        fill="none" stroke="#00e5ff" stroke-width="2.5"/>
+
+  <!-- Area under primary -->
+  <path d="M60,350 C100,300 130,260 178,250 C225,240 250,370 296,380
+           C340,390 365,195 414,190 C460,185 480,340 532,330
+           C575,320 600,440 650,420 C695,400 720,225 748,215 L748,460 L60,460 Z"
+        fill="url(#fill-a)"/>
+
+  <!-- Key dots -->
+  <circle cx="60"  cy="350" r="3.5" fill="#00e5ff"/>
+  <circle cx="296" cy="380" r="3.5" fill="#00e5ff"/>
+  <circle cx="414" cy="190" r="4"   fill="#00e5ff"/>
+  <circle cx="532" cy="330" r="3.5" fill="#00e5ff"/>
+  <circle cx="748" cy="215" r="3.5" fill="#00e5ff"/>
+  <!-- COVID dip annotation -->
+  <circle cx="532" cy="420" r="5" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <line   x1="532" y1="415" x2="532" y2="390" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="538" y="388" fill="#f59e0b" font-size="9" font-family="monospace">2020</text>
+
+  <!-- Axis labels -->
+  <text x="60"  y="490" fill="#2a3854" font-size="9" font-family="monospace">2017</text>
+  <text x="172" y="490" fill="#2a3854" font-size="9" font-family="monospace">2018</text>
+  <text x="290" y="490" fill="#2a3854" font-size="9" font-family="monospace">2019</text>
+  <text x="408" y="490" fill="#2a3854" font-size="9" font-family="monospace">2020</text>
+  <text x="526" y="490" fill="#2a3854" font-size="9" font-family="monospace">2021</text>
+  <text x="644" y="490" fill="#2a3854" font-size="9" font-family="monospace">2022</text>
+
+  <!-- Legend -->
+  <line x1="60" y1="533" x2="84" y2="533" stroke="#00e5ff" stroke-width="2"/>
+  <text x="89" y="537" fill="#4a5a78" font-size="10" font-family="monospace">ICCMX</text>
+  <line x1="165" y1="533" x2="189" y2="533" stroke="#7b61ff" stroke-width="2"/>
+  <text x="194" y="537" fill="#4a5a78" font-size="10" font-family="monospace">GOOGLE TRENDS</text>
+
+  <!-- Title label -->
+  <text x="60" y="58" fill="#3a4a68" font-size="10" font-family="monospace" letter-spacing="3">CONSUMER CONFIDENCE · TIME SERIES</text>
+</svg>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ── BIO ── */
+    .bio-section {
+      position: relative; z-index: 1;
+      padding: 7rem 3rem;
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: 7rem; align-items: start;
+    }
+    .bio-sticky { position: sticky; top: 7rem; }
+    .bio-avatar {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 2px solid var(--border); overflow: hidden;
+      margin-bottom: 2rem; background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bio-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .bio-avatar-placeholder { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem; color: var(--accent); }
+    .bio-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: 0.25rem; color: var(--white); }
+    .bio-role { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; }
+    .bio-links { display: flex; flex-direction: column; gap: 0.5rem; }
+    .bio-link {
+      font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted);
+      text-decoration: none; transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .bio-link:hover { color: var(--accent); }
+    .bio-link-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+    .bio-para { font-size: 1.05rem; font-weight: 300; color: var(--muted); line-height: 1.85; margin-bottom: 1.5rem; }
+    .bio-para strong { color: var(--text); font-weight: 400; }
+
+    /* ── TRAITS ── */
+    .traits {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 3rem 0;
+    }
+    .trait-item { background: var(--bg); padding: 1.5rem; transition: background 0.2s; }
+    .trait-item:hover { background: var(--surface); }
+    .trait-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .trait-name { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.35rem; color: var(--white); }
+    .trait-desc { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    /* ── SKILLS ── */
+    .skills-section { position: relative; z-index: 1; padding: 0 3rem 7rem; }
+    .skill-row { margin-bottom: 1.75rem; }
+    .skill-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .skill-name-label { font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--text); }
+    .skill-pct { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+    .skill-track { height: 3px; background: var(--border); position: relative; overflow: hidden; }
+    .skill-fill { height: 100%; background: var(--accent); width: 0%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .skill-fill.c2 { background: var(--accent2); }
+    .skill-fill.c3 { background: var(--accent3); }
+
+    /* ── DOMAINS ── */
+    .domains-section {
+      position: relative; z-index: 1; padding: 6rem 3rem;
+      background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .domains-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 3rem;
+    }
+    .domain-card { background: var(--surface); padding: 2rem; transition: background 0.2s; }
+    .domain-card:hover { background: var(--bg); }
+    .domain-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2rem; color: var(--border); letter-spacing: -0.03em; margin-bottom: 0.75rem; }
+    .domain-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; color: var(--white); }
+    .domain-desc { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .bio-section { padding: 4rem 1.5rem; grid-template-columns: 1fr; gap: 3rem; }
+      .bio-sticky { position: static; }
+      .skills-section { padding: 0 1.5rem 4rem; }
+      .domains-section { padding: 4rem 1.5rem; }
+      .domains-grid { grid-template-columns: 1fr 1fr; }
+      .traits { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header-section">
+    <p class="page-eyebrow">// About Me</p>
+    <h1>The <span class="outline">mind</span><br>behind the data.</h1>
+  </div>
+
+  <!-- BIO -->
+  <section class="bio-section">
+    <div class="bio-sticky">
+      <div class="bio-avatar">
+        <img src="../assets/img/jd.png" alt="JD"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="bio-avatar-placeholder" style="display:none;">JD</div>
+      </div>
+      <div class="bio-name">JD</div>
+      <div class="bio-role">Lead Data Scientist · PhD · London &amp; Mexico City</div>
+      <div class="bio-links">
+        <a class="bio-link" href="https://github.com/chewingumex" target="_blank">
+          <span class="bio-link-dot"></span>github.com/chewingumex
+        </a>
+        <a class="bio-link" href="https://www.linkedin.com/in/jondoff/" target="_blank">
+          <span class="bio-link-dot"></span>in/jondoff
+        </a>
+        <a class="bio-link" href="https://www.doctorswithoutborders.org/" target="_blank">
+          <span class="bio-link-dot" style="background:var(--accent3);"></span>Doctors Without Borders ♥
+        </a>
+      </div>
+    </div>
+
+    <div class="bio-content fade-up">
+      <p class="section-label">// Background</p>
+      <p class="bio-para">
+        I'm a <strong>Lead Data Scientist and team leader</strong> with a PhD from University College London and a background in psychology — a combination that shapes how I frame problems, communicate insight, and build teams that think carefully. I believe the best data science is always in service of a real question.
+      </p>
+      <p class="bio-para">
+        I've led data science teams at <strong>HSBC</strong> (12 scientists, CIB growth), <strong>Warner Music Group</strong> (Director of Audience Targeting), and <strong>Freemavens</strong> (Head of DS). Across FinTech, AdTech, Market Research, and FMCG, I've built and shipped ML solutions — from credit scorecards and audience segments to generative AI pipelines and time series forecasts.
+      </p>
+      <p class="bio-para">
+        I also lecture in <strong>Business Intelligence</strong> at ITESM Campus Sta Fe, teaching the next generation how to apply machine learning to commercial problems. I learn fast, play fair, and leave things better than I found them.
+      </p>
+
+      <div class="traits">
+        <div class="trait-item">
+          <div class="trait-icon">📚</div>
+          <div class="trait-name">Curious Mind</div>
+          <div class="trait-desc">Always seeking new frameworks and ways of thinking — from psychoanalysis to transformers.</div>
+        </div>
+        <div class="trait-item">
+          <div class="trait-icon">🤝</div>
+          <div class="trait-name">Team Builder</div>
+          <div class="trait-desc">Led teams of up to 12 data scientists. I invest in the people as much as the models.</div>
+        </div>
+        <div class="trait-item">
+          <div class="trait-icon">🔥</div>
+          <div class="trait-name">Driven &amp; Passionate</div>
+          <div class="trait-desc">From psychometrics to generative AI — I'm hooked on finding signal in noise at any scale.</div>
+        </div>
+        <div class="trait-item">
+          <div class="trait-icon">🌍</div>
+          <div class="trait-name">Citizen of the World</div>
+          <div class="trait-desc">International background across London, Mexico City, and clients on four continents.</div>
+        </div>
+      </div>
+
+      <p class="section-label">// The Thinking</p>
+      <p class="bio-para">
+        <strong>Psychometrics led me to data science.</strong> A PhD in psychoanalytic studies gave me an obsession with what's hidden beneath the surface — which turns out to be exactly the right mindset for modelling. I enjoy the full stack: shaping the problem, building the model, deploying it, and mentoring the team around it. Self-teaching and open source have been central to everything I know. As long as I keep learning with a busy mind, I'll be happy.
+      </p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills-section">
+    <p class="section-label">// Tech Skills</p>
+    <h2 class="section-title">Languages &amp; Tools</h2>
+
+    <div id="skillsBlock" style="max-width:640px;margin-top:3rem;">
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">R</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">Python</span><span class="skill-pct">85%</span></div>
+        <div class="skill-track"><div class="skill-fill c2" data-width="85"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">SQL</span><span class="skill-pct">85%</span></div>
+        <div class="skill-track"><div class="skill-fill c3" data-width="85"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">Machine Learning</span><span class="skill-pct">88%</span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="88"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">NLP &amp; Generative AI</span><span class="skill-pct">80%</span></div>
+        <div class="skill-track"><div class="skill-fill c2" data-width="80"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">Data Visualisation</span><span class="skill-pct">90%</span></div>
+        <div class="skill-track"><div class="skill-fill c3" data-width="90"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">Statistical Analysis</span><span class="skill-pct">88%</span></div>
+        <div class="skill-track"><div class="skill-fill" data-width="88"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name-label">PySpark &amp; Cloud (GCP · AWS · Azure)</span><span class="skill-pct">75%</span></div>
+        <div class="skill-track"><div class="skill-fill c2" data-width="75"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOMAINS -->
+  <section class="domains-section">
+    <p class="section-label">// Industry Experience</p>
+    <h2 class="section-title">Domains I've worked in</h2>
+    <div class="domains-grid fade-up">
+      <div class="domain-card">
+        <div class="domain-num">01</div>
+        <div class="domain-title">Credit &amp; Risk</div>
+        <div class="domain-desc">Probability of default modelling, credit scoring, and risk strategy.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">02</div>
+        <div class="domain-title">AdTech</div>
+        <div class="domain-desc">Audience segmentation, psychographic targeting, campaign analytics, and attribution modelling.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">03</div>
+        <div class="domain-title">Market Research</div>
+        <div class="domain-desc">Consumer behaviour, survey analysis, psychometric profiling, and panel data modelling.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">04</div>
+        <div class="domain-title">Public Health</div>
+        <div class="domain-desc">Epidemiological data analysis and visualisation — see COVID-19 project.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">05</div>
+        <div class="domain-title">Gaming</div>
+        <div class="domain-desc">A/B testing, experimentation design, and player behaviour analysis.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">06</div>
+        <div class="domain-title">Finance &amp; FinTech</div>
+        <div class="domain-desc">Transaction forecasting, time series modelling, anomaly detection, and CIB growth analytics.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">07</div>
+        <div class="domain-title">NLP &amp; Generative AI</div>
+        <div class="domain-desc">LSTM and Attention-based transformers for summarisation, translation, and synthetic insight generation.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">08</div>
+        <div class="domain-title">Team Leadership</div>
+        <div class="domain-desc">Managing and mentoring DS teams of up to 12 at HSBC, Warner Music Group, and Freemavens.</div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">09</div>
+        <div class="domain-title">Education</div>
+        <div class="domain-desc">Lecturing Applied ML and Business Intelligence at ITESM Campus Sta Fe since 2023.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2025 JD · Data Science Portfolio · London &amp; Mexico City</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.skill-fill').forEach(b => { b.style.width = b.dataset.width + '%'; });
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    const block = document.getElementById('skillsBlock');
+    if (block) obs.observe(block);
+  </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="gc" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gp" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#7b61ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ga" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="curveLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#060a0f"/>
+  <rect width="800" height="600" fill="url(#g)"/>
+
+  <!-- Title -->
+  <text x="52" y="42" font-family="monospace" font-size="10" fill="#00e5ff" opacity="0.6" letter-spacing="3">// APPLIED ML · BUSINESS INTELLIGENCE · ITESM</text>
+
+  <!-- ══════════ LEFT PANEL — CODE EDITOR ══════════ -->
+  <!-- Editor chrome -->
+  <rect x="52" y="64" width="330" height="330" rx="6" fill="rgba(14,21,32,0.95)" stroke="#1c2840" stroke-width="1"/>
+  <!-- Title bar -->
+  <rect x="52" y="64" width="330" height="28" rx="6" fill="#0e1520"/>
+  <rect x="52" y="78" width="330" height="14" fill="#0e1520"/>
+  <circle cx="74" cy="78" r="5" fill="#f59e0b" opacity="0.7"/>
+  <circle cx="90" cy="78" r="5" fill="#00e5ff" opacity="0.4"/>
+  <circle cx="106" cy="78" r="5" fill="#7b61ff" opacity="0.4"/>
+  <text x="200" y="83" font-family="monospace" font-size="8" fill="#6a7a99" text-anchor="middle">classification.py</text>
+
+  <!-- Line numbers + code -->
+  <!-- Line 1 -->
+  <text x="72" y="112" font-family="monospace" font-size="9" fill="#6a7a99">01</text>
+  <text x="96" y="112" font-family="monospace" font-size="9" fill="#7b61ff">from</text>
+  <text x="128" y="112" font-family="monospace" font-size="9" fill="#cdd6f4">sklearn.ensemble</text>
+  <text x="244" y="112" font-family="monospace" font-size="9" fill="#7b61ff">import</text>
+  <!-- Line 2 -->
+  <text x="72" y="128" font-family="monospace" font-size="9" fill="#6a7a99">02</text>
+  <text x="96" y="128" font-family="monospace" font-size="9" fill="#cdd6f4">    RandomForestClassifier</text>
+  <!-- Line 3 -->
+  <text x="72" y="144" font-family="monospace" font-size="9" fill="#6a7a99">03</text>
+  <text x="96" y="144" font-family="monospace" font-size="9" fill="#7b61ff">import</text>
+  <text x="136" y="144" font-family="monospace" font-size="9" fill="#cdd6f4">pandas</text>
+  <text x="186" y="144" font-family="monospace" font-size="9" fill="#7b61ff">as</text>
+  <text x="204" y="144" font-family="monospace" font-size="9" fill="#cdd6f4">pd</text>
+  <!-- Line 4 blank -->
+  <text x="72" y="160" font-family="monospace" font-size="9" fill="#6a7a99">04</text>
+  <!-- Line 5 -->
+  <text x="72" y="176" font-family="monospace" font-size="9" fill="#6a7a99">05</text>
+  <text x="96" y="176" font-family="monospace" font-size="9" fill="#00e5ff">clf</text>
+  <text x="116" y="176" font-family="monospace" font-size="9" fill="#cdd6f4">=</text>
+  <text x="124" y="176" font-family="monospace" font-size="9" fill="#f59e0b">RandomForestClassifier</text>
+  <text x="308" y="176" font-family="monospace" font-size="9" fill="#cdd6f4">(</text>
+  <!-- Line 6 -->
+  <text x="72" y="192" font-family="monospace" font-size="9" fill="#6a7a99">06</text>
+  <text x="96" y="192" font-family="monospace" font-size="9" fill="#cdd6f4">    n_estimators=</text>
+  <text x="208" y="192" font-family="monospace" font-size="9" fill="#f59e0b">100</text>
+  <text x="228" y="192" font-family="monospace" font-size="9" fill="#cdd6f4">,  max_depth=</text>
+  <text x="322" y="192" font-family="monospace" font-size="9" fill="#f59e0b">5</text>
+  <!-- Line 7 -->
+  <text x="72" y="208" font-family="monospace" font-size="9" fill="#6a7a99">07</text>
+  <text x="96" y="208" font-family="monospace" font-size="9" fill="#cdd6f4">)</text>
+  <!-- Line 8 blank -->
+  <text x="72" y="224" font-family="monospace" font-size="9" fill="#6a7a99">08</text>
+  <!-- Line 9 -->
+  <text x="72" y="240" font-family="monospace" font-size="9" fill="#6a7a99">09</text>
+  <text x="96" y="240" font-family="monospace" font-size="9" fill="#00e5ff">clf</text>
+  <text x="116" y="240" font-family="monospace" font-size="9" fill="#cdd6f4">.fit(</text>
+  <text x="150" y="240" font-family="monospace" font-size="9" fill="#cdd6f4">X_train, y_train</text>
+  <text x="276" y="240" font-family="monospace" font-size="9" fill="#cdd6f4">)</text>
+  <!-- Line 10 blank -->
+  <text x="72" y="256" font-family="monospace" font-size="9" fill="#6a7a99">10</text>
+  <!-- Line 11 -->
+  <text x="72" y="272" font-family="monospace" font-size="9" fill="#6a7a99">11</text>
+  <text x="96" y="272" font-family="monospace" font-size="9" fill="#00e5ff">accuracy</text>
+  <text x="156" y="272" font-family="monospace" font-size="9" fill="#cdd6f4">=</text>
+  <text x="164" y="272" font-family="monospace" font-size="9" fill="#00e5ff">clf</text>
+  <text x="184" y="272" font-family="monospace" font-size="9" fill="#cdd6f4">.score(X_test, y_test)</text>
+  <!-- Line 12 blank -->
+  <text x="72" y="288" font-family="monospace" font-size="9" fill="#6a7a99">12</text>
+  <!-- Line 13 -->
+  <text x="72" y="304" font-family="monospace" font-size="9" fill="#6a7a99">13</text>
+  <text x="96" y="304" font-family="monospace" font-size="9" fill="#7b61ff">print</text>
+  <text x="134" y="304" font-family="monospace" font-size="9" fill="#cdd6f4">(</text>
+  <text x="140" y="304" font-family="monospace" font-size="9" fill="#f59e0b">"Accuracy:"</text>
+  <text x="216" y="304" font-family="monospace" font-size="9" fill="#cdd6f4">,</text>
+  <text x="224" y="304" font-family="monospace" font-size="9" fill="#00e5ff">accuracy</text>
+  <text x="278" y="304" font-family="monospace" font-size="9" fill="#cdd6f4">)</text>
+  <!-- Cursor blink line -->
+  <rect x="96" y="316" width="6" height="10" fill="#00e5ff" opacity="0.7"/>
+  <text x="72" y="325" font-family="monospace" font-size="9" fill="#6a7a99">14</text>
+
+  <!-- Output console area -->
+  <rect x="52" y="394" width="330" height="60" rx="0" fill="rgba(8,12,16,0.95)" stroke="none"/>
+  <rect x="52" y="394" width="330" height="60" rx="0" fill="rgba(0,0,0,0.4)"/>
+  <text x="68" y="412" font-family="monospace" font-size="8" fill="#6a7a99">&gt; python classification.py</text>
+  <text x="68" y="428" font-family="monospace" font-size="9" fill="#00e5ff">Accuracy: 0.9480</text>
+  <text x="68" y="444" font-family="monospace" font-size="9" fill="#f59e0b">AUC-ROC:  0.9720</text>
+
+  <!-- ══════════ RIGHT PANEL — LEARNING CURVE ══════════ -->
+  <rect x="418" y="64" width="330" height="260" rx="6" fill="rgba(14,21,32,0.85)" stroke="#1c2840" stroke-width="1"/>
+  <text x="434" y="90" font-family="monospace" font-size="8" fill="#6a7a99" letter-spacing="2">LEARNING CURVE</text>
+
+  <!-- Chart axes -->
+  <line x1="450" y1="100" x2="450" y2="290" stroke="#1c2840" stroke-width="1"/>
+  <line x1="450" y1="290" x2="720" y2="290" stroke="#1c2840" stroke-width="1"/>
+
+  <!-- Y grid lines -->
+  <line x1="450" y1="248" x2="720" y2="248" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <line x1="450" y1="206" x2="720" y2="206" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <line x1="450" y1="164" x2="720" y2="164" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <line x1="450" y1="122" x2="720" y2="122" stroke="#1c2840" stroke-width="0.5" stroke-dasharray="3,4"/>
+
+  <!-- Y axis labels -->
+  <text x="444" y="293" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="end">0%</text>
+  <text x="444" y="251" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="end">25%</text>
+  <text x="444" y="209" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="end">50%</text>
+  <text x="444" y="167" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="end">75%</text>
+  <text x="444" y="125" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="end">100%</text>
+
+  <!-- X axis labels (epochs/weeks) -->
+  <text x="488" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">1</text>
+  <text x="532" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">2</text>
+  <text x="576" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">3</text>
+  <text x="620" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">4</text>
+  <text x="664" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">5</text>
+  <text x="708" y="302" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">6</text>
+  <text x="580" y="316" font-family="monospace" font-size="7" fill="#6a7a99" text-anchor="middle">Weeks of Study</text>
+
+  <!-- Training accuracy curve (cyan) — improving rapidly then plateauing -->
+  <polyline points="450,268 488,218 532,176 576,148 620,130 664,118 708,112"
+    fill="none" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <!-- Validation accuracy curve (purple) — slightly lower, same trend -->
+  <polyline points="450,276 488,232 532,194 576,164 620,148 664,138 708,134"
+    fill="none" stroke="#7b61ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" stroke-dasharray="6,3"/>
+
+  <!-- Dots on training curve -->
+  <circle cx="488" cy="218" r="3" fill="#00e5ff"/>
+  <circle cx="532" cy="176" r="3" fill="#00e5ff"/>
+  <circle cx="576" cy="148" r="3" fill="#00e5ff"/>
+  <circle cx="620" cy="130" r="3" fill="#00e5ff"/>
+  <circle cx="664" cy="118" r="3" fill="#00e5ff"/>
+  <circle cx="708" cy="112" r="3" fill="#00e5ff"/>
+
+  <!-- Legend inside chart -->
+  <line x1="460" y1="312" x2="478" y2="312" stroke="#00e5ff" stroke-width="2"/>
+  <text x="482" y="316" font-family="monospace" font-size="7" fill="#6a7a99">Training</text>
+  <line x1="538" y1="312" x2="556" y2="312" stroke="#7b61ff" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="560" y="316" font-family="monospace" font-size="7" fill="#6a7a99">Validation</text>
+
+  <!-- ══════════ BOTTOM ROW — DECISION TREE ══════════ -->
+  <text x="418" y="362" font-family="monospace" font-size="8" fill="#6a7a99" letter-spacing="2">DECISION TREE CONCEPT</text>
+
+  <!-- Root node -->
+  <ellipse cx="580" cy="388" rx="52" ry="18" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="1"/>
+  <text x="580" y="393" font-family="monospace" font-size="8" fill="#00e5ff" text-anchor="middle">Feature Split</text>
+
+  <!-- Left branch -->
+  <line x1="540" y1="402" x2="500" y2="430" stroke="#1c2840" stroke-width="1"/>
+  <ellipse cx="492" cy="445" rx="44" ry="16" fill="rgba(123,97,255,0.08)" stroke="#7b61ff" stroke-width="1"/>
+  <text x="492" y="450" font-family="monospace" font-size="8" fill="#7b61ff" text-anchor="middle">X ≤ thresh</text>
+
+  <!-- Right branch -->
+  <line x1="620" y1="402" x2="660" y2="430" stroke="#1c2840" stroke-width="1"/>
+  <ellipse cx="668" cy="445" rx="44" ry="16" fill="rgba(123,97,255,0.08)" stroke="#7b61ff" stroke-width="1"/>
+  <text x="668" y="450" font-family="monospace" font-size="8" fill="#7b61ff" text-anchor="middle">X &gt; thresh</text>
+
+  <!-- Leaf nodes -->
+  <line x1="465" y1="459" x2="444" y2="484" stroke="#1c2840" stroke-width="1"/>
+  <rect x="420" y="482" width="48" height="22" rx="3" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="0.8"/>
+  <text x="444" y="497" font-family="monospace" font-size="8" fill="#f59e0b" text-anchor="middle">Class A</text>
+
+  <line x1="518" y1="459" x2="536" y2="484" stroke="#1c2840" stroke-width="1"/>
+  <rect x="514" y="482" width="48" height="22" rx="3" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="0.8"/>
+  <text x="538" y="497" font-family="monospace" font-size="8" fill="#00e5ff" text-anchor="middle">Class B</text>
+
+  <line x1="640" y1="459" x2="620" y2="484" stroke="#1c2840" stroke-width="1"/>
+  <rect x="598" y="482" width="48" height="22" rx="3" fill="rgba(0,229,255,0.08)" stroke="#00e5ff" stroke-width="0.8"/>
+  <text x="622" y="497" font-family="monospace" font-size="8" fill="#00e5ff" text-anchor="middle">Class B</text>
+
+  <line x1="694" y1="459" x2="714" y2="484" stroke="#1c2840" stroke-width="1"/>
+  <rect x="692" y="482" width="48" height="22" rx="3" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="0.8"/>
+  <text x="716" y="497" font-family="monospace" font-size="8" fill="#f59e0b" text-anchor="middle">Class A</text>
+
+  <!-- ══════════ BOTTOM — COURSES ══════════ -->
+  <line x1="52" y1="530" x2="748" y2="530" stroke="#1c2840" stroke-width="0.7"/>
+  <text x="52" y="550" font-family="monospace" font-size="8" fill="#6a7a99" letter-spacing="2">COURSES</text>
+
+  <rect x="52" y="558" width="90" height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8"/>
+  <text x="97" y="573" font-family="monospace" font-size="9" fill="#00e5ff" text-anchor="middle">CD2001B</text>
+
+  <rect x="158" y="558" width="90" height="22" rx="3" fill="rgba(123,97,255,0.06)" stroke="#7b61ff" stroke-width="0.8"/>
+  <text x="203" y="573" font-family="monospace" font-size="9" fill="#7b61ff" text-anchor="middle">CD3001B</text>
+
+  <rect x="264" y="558" width="90" height="22" rx="3" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" stroke-width="0.8"/>
+  <text x="309" y="573" font-family="monospace" font-size="9" fill="#f59e0b" text-anchor="middle">CD3002</text>
+
+  <text x="400" y="572" font-family="monospace" font-size="8" fill="#6a7a99">Business Intelligence BA · Marketing Dept · ITESM Campus Sta Fe</text>
+</svg>

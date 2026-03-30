@@ -1,123 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · Contact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .contact-section { position: relative; z-index: 1; padding: 3rem 3rem 7rem; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: start; max-width: 960px; }
 
-    <title>JD'S DATA SCIENCE </title>
+    /* sidebar */
+    .contact-sidebar { position: sticky; top: 7rem; }
+    .contact-aside-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--white); margin-bottom: 1rem; }
+    .contact-aside-p { font-size: 0.9rem; color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .c-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text);
+      font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.05em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .c-link:last-child { border-bottom: none; }
+    .c-link:hover { background: var(--surface); color: var(--accent); }
+    .c-link span:last-child { color: var(--muted); transition: color 0.2s; }
+    .c-link:hover span:last-child { color: var(--accent); }
 
-    <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    /* form */
+    .form-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.5rem; }
+    .form-field { margin-bottom: 1.5rem; }
+    .form-input {
+      width: 100%; padding: 0.85rem 1rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 300;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
+    .form-input::placeholder { color: var(--muted); }
+    textarea.form-input { resize: vertical; min-height: 140px; }
+    .form-error { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #f87171; margin-bottom: 1rem; display: none; }
+    .form-success { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); margin-bottom: 1rem; display: none; }
+    .form-note { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-top: 0.75rem; letter-spacing: 0.05em; }
 
+    @media (max-width: 900px) {
+      .contact-section { padding: 2rem 1.5rem 5rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .contact-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
 
-    <!-- Custom styles for this template -->
-    <link href="assets/css/main.css" rel="stylesheet">
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
 
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="assets/js/hover.zoom.js"></script>
-    <script src="assets/js/hover.zoom.conf.js"></script>
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+  </nav>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-  </head>
+  <div class="page-header-section">
+    <p class="page-eyebrow">// Get in Touch</p>
+    <h1>Let's start a<br><span class="outline">conversation.</span></h1>
+  </div>
 
-  <body>
+  <section class="contact-section">
+    <div class="contact-grid">
 
-    <!-- Static navbar -->
-    <div class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html">MY DATA SCIENCE PORTFOLIO</a>
+      <div class="contact-sidebar fade-up">
+        <div class="contact-aside-title">Say hello.</div>
+        <p class="contact-aside-p">Have a project in mind, a question about the work, or just want to connect? Fill in the form and I'll reply soon.</p>
+        <div class="contact-links">
+          <a class="c-link" href="https://github.com/chewingumex" target="_blank">
+            <span>GitHub</span><span>↗</span>
+          </a>
+          <a class="c-link" href="https://www.linkedin.com/in/jondoff/" target="_blank">
+            <span>LinkedIn</span><span>↗</span>
+          </a>
+          <div class="c-link" style="cursor:default;">
+            <span style="color:var(--muted);">📍 London &amp; Mexico City</span>
+          </div>
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="work.html">Work</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
       </div>
-    </div>
-	
-	
-	<!-- +++++ Contact Section +++++ -->
-	
-	<div class="container pt">
-		<div class="row mt">
-			<div class="col-lg-6 col-lg-offset-3 centered">
-				<h3>CONTACT ME</h3>
-				<hr>
-				<p>This is where you get in touch. I'll reply soon!</p>
-			</div>
-		</div>
-		<div class="row mt">	
-			<div class="col-lg-8 col-lg-offset-2">
-				<form role="form" action="email_sender.php" name="get_in_touch" method="POST">
-				  <div class="form-group">
-				    <input type="name" class="form-control" id="NameInputEmail1" placeholder="Your Name">
-				    <br>
-				  </div>
-				  <div class="form-group">
-				    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-				    <br>
-				  </div>
-				  <div class="form-group">
-				    <input type="subject" class="form-control" id="subjectEmail1" placeholder="Subject">
-				    <br>
-				  </div>
-				  <textarea class="form-control" id="message" rows="6" placeholder="Enter your text here"></textarea>
-				    <br>
-				  <button type="submit" class="btn btn-success">SUBMIT</button>
-				</form>    			
-			</div>
-		</div><!-- /row -->
-	</div><!-- /container -->
-	
-	
-	<!-- +++++ Footer Section +++++ -->
-	
-	<div id="footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-4">
-					<h4>My Pad</h4>
-					<p>London, UK.</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Links</h4>
-					<p>
-						<a href="https://www.github.com/chewingumex">GitHub</a><br/>
-						<a href="https://www.linkedin.com/in/jondavidoff">LinkedIn</a><br/>
-					</p>
-				</div><!-- /col-lg-4 -->
-				
-				<div class="col-lg-4">
-					<h4>My Good Cause</h4>
-					<p><a href="https://www.doctorswithoutborders.org/">doctorswithoutborders.org</a></p>
-				</div><!-- /col-lg-4 -->
-			
-			</div>
-		
-		</div>
-	</div>
-	
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="assets/js/bootstrap.min.js"></script>
-  </body>
+      <div class="fade-up">
+        <!--
+          CONTACT FORM SETUP (Formspree — free for GitHub Pages):
+          1. Go to https://formspree.io and create a free account
+          2. Create a new form and copy your form ID (e.g. "xpwzrjyp")
+          3. Replace YOUR_FORM_ID in the action URL below
+          Submissions will be emailed directly to you. No server needed.
+        -->
+        <form id="contactForm" action="https://formspree.io/f/mbdpgpbp" method="POST" novalidate>
+
+          <div class="form-field">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="subject">Subject</label>
+            <input class="form-input" type="text" id="subject" name="subject" placeholder="What's this about?">
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="message">Message</label>
+            <textarea class="form-input" id="message" name="message" placeholder="Your message…" required></textarea>
+          </div>
+
+          <div class="form-error" id="formError"></div>
+          <div class="form-success" id="formSuccess">Message sent — I'll be in touch soon.</div>
+
+          <button type="submit" class="btn btn-primary" id="submitBtn">Send message →</button>
+          <p class="form-note">No spam. Your email is only used to reply.</p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2025 JD · Data Science Portfolio · London &amp; Mexico City</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    var form = document.getElementById('contactForm');
+    var errorBox = document.getElementById('formError');
+    var successBox = document.getElementById('formSuccess');
+    var submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      var name    = document.getElementById('name').value.trim();
+      var email   = document.getElementById('email').value.trim();
+      var message = document.getElementById('message').value.trim();
+      var re      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!name)         { errorBox.textContent = 'Please enter your name.'; errorBox.style.display = 'block'; return; }
+      if (!re.test(email)) { errorBox.textContent = 'Please enter a valid email.'; errorBox.style.display = 'block'; return; }
+      if (message.length < 5) { errorBox.textContent = 'Please enter a message.'; errorBox.style.display = 'block'; return; }
+
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      fetch(form.action, {
+        method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' }
+      }).then(function(res) {
+        if (res.ok) { successBox.style.display = 'block'; form.reset(); }
+        else { errorBox.textContent = 'Something went wrong. Please try again.'; errorBox.style.display = 'block'; }
+      }).catch(function() {
+        errorBox.textContent = 'Network error. Check your connection.'; errorBox.style.display = 'block';
+      }).finally(function() {
+        submitBtn.textContent = 'Send message →'; submitBtn.disabled = false;
+      });
+    });
+  </script>
+</body>
 </html>

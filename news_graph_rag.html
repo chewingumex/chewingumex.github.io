@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JD · BBC News Graph RAG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .project-body {
+      position: relative; z-index: 1;
+      padding: 5rem 3rem; max-width: 980px;
+    }
+    .project-meta {
+      display: flex; gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 6px;
+      overflow: hidden; margin-bottom: 3rem; flex-wrap: wrap;
+    }
+    .meta-cell { background: var(--surface); padding: 1.25rem 1.75rem; flex: 1; min-width: 140px; }
+    .meta-cell-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
+    .meta-cell-value { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--white); }
+    .project-desc { font-size: 1.05rem; color: var(--text); line-height: 1.9; font-weight: 300; margin-bottom: 1.75rem; }
+    .back-link {
+      font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      display: block; transition: color 0.2s; margin-bottom: 3rem;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      display: flex; gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; margin-bottom: 3.5rem; text-align: center;
+    }
+    .stat-cell { background: var(--card-bg); padding: 1.5rem 1rem; flex: 1; }
+    .stat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; color: var(--accent); line-height: 1; display: block; }
+    .stat-lab { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 0.35rem; }
+
+    /* ── PIPELINE ── */
+    .pipeline-flow {
+      display: flex; align-items: flex-start; gap: 0.4rem;
+      margin-bottom: 3rem; overflow-x: auto; padding-bottom: 0.5rem;
+    }
+    .pipe-step {
+      flex: 1; min-width: 120px; padding: 1rem 0.85rem;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .pipe-num { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 0.4rem; }
+    .pipe-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--white); margin-bottom: 0.4rem; }
+    .pipe-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+    .pipe-arrow { color: var(--accent); font-size: 1rem; flex-shrink: 0; padding-top: 1.4rem; opacity: 0.6; }
+
+    /* ── DECISION CARDS ── */
+    .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 3rem; }
+    .decision-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.5rem;
+    }
+    .decision-card:hover { border-color: rgba(0,229,255,0.25); }
+    .decision-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+    .decision-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--white); margin-bottom: 0.65rem; }
+    .decision-body { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+    .decision-body strong { color: var(--text); }
+
+    /* ── QUERY EXAMPLES ── */
+    .qa-block {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem;
+    }
+    .qa-header { padding: 1.1rem 1.4rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .qa-query { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--accent3); margin-bottom: 0.6rem; }
+    .qa-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .badge {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.2rem 0.55rem; border-radius: 3px;
+    }
+    .badge-local  { background: rgba(0,229,255,0.1);  color: var(--accent);  border: 1px solid rgba(0,229,255,0.25); }
+    .badge-global { background: rgba(123,97,255,0.1); color: var(--accent2); border: 1px solid rgba(123,97,255,0.25); }
+    .badge-both   { background: rgba(245,158,11,0.1); color: var(--accent3); border: 1px solid rgba(245,158,11,0.25); }
+    .badge-ent    { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); font-size: 0.58rem; }
+    .qa-meta { padding: 0.55rem 1.4rem; font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); border-bottom: 1px solid var(--border); letter-spacing: 0.05em; }
+    .qa-answer { padding: 1.1rem 1.4rem; font-size: 0.88rem; color: var(--text); line-height: 1.8; }
+    .qa-note { margin-top: 0.65rem; font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.65rem; }
+
+    /* ── EDA LINK CARD ── */
+    .eda-cta-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1.75rem 2rem; text-decoration: none; transition: border-color 0.2s, background 0.2s;
+    }
+    .eda-cta-card:hover { border-color: rgba(0,229,255,0.35); background: var(--surface); }
+    .eda-cta-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .eda-cta-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--white); margin-bottom: 0.5rem; }
+    .eda-cta-desc { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+    .eda-cta-arrow { font-size: 1.6rem; color: var(--accent); opacity: 0.6; flex-shrink: 0; margin-left: 2rem; transition: opacity 0.2s, transform 0.2s; }
+    .eda-cta-card:hover .eda-cta-arrow { opacity: 1; transform: translate(3px,-3px); }
+
+    /* ── HIGHLIGHTS ── */
+    .highlights { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 3rem; }
+    .highlights li { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--muted); padding: 0.6rem 0.9rem; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; gap: 0.5rem; }
+    .highlights li::before { content: '▸'; color: var(--accent); font-size: 0.65rem; }
+    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .inline-note { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+
+    @media (max-width: 900px) {
+      .project-body { padding: 3rem 1.5rem; }
+      .project-meta, .stats-strip { flex-direction: column; }
+      .decision-grid { grid-template-columns: 1fr; }
+      .highlights { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .pipeline-flow { flex-direction: column; }
+      .pipe-arrow { transform: rotate(90deg); padding-top: 0; }
+      .eda-cta-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .eda-cta-arrow { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="glow-orb a"></div>
+  <div class="glow-orb b"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">JD<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="work.html" class="active">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header-section">
+    <p class="page-eyebrow">// NLP · Knowledge Graphs · RAG</p>
+    <h1>BBC News<br><span class="outline">Graph RAG</span></h1>
+  </div>
+
+  <div class="project-body">
+    <a href="work.html" class="back-link">← Back to all work</a>
+
+    <div class="project-meta fade-up">
+      <div class="meta-cell">
+        <div class="meta-cell-label">Corpus</div>
+        <div class="meta-cell-value">BBC News (2,147 articles)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Methods</div>
+        <div class="meta-cell-value">Graph ML · Leiden · RAG</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Stack</div>
+        <div class="meta-cell-value">NetworkX · Ollama · Gemma</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-label">Status</div>
+        <div class="meta-cell-value">End-to-end · In Research</div>
+      </div>
+    </div>
+
+    <div class="stats-strip fade-up">
+      <div class="stat-cell">
+        <span class="stat-num">13,406</span>
+        <span class="stat-lab">Graph Nodes</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">32,496</span>
+        <span class="stat-lab">Edges</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">11,259</span>
+        <span class="stat-lab">Unique Entities</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">651</span>
+        <span class="stat-lab">Communities (2 levels)</span>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <p class="section-label">// Overview</p>
+      <p class="project-desc">
+        An end-to-end <strong>Graph Retrieval-Augmented Generation</strong> (Graph RAG) system built on a corpus of 2,147 BBC News articles. Every article is processed by a two-pass Gemma4 LLM pipeline that extracts named entities and their relationships, which are then wired into a <strong>NetworkX knowledge graph</strong>. Articles are linked to one another through cosine similarity (<code>SIMILAR_TO</code> edges at a 0.85 threshold), creating a semantic bridge across the corpus.
+      </p>
+      <p class="project-desc">
+        The graph is then clustered using a <strong>two-level Leiden algorithm</strong> — 74 broad communities (Level 0) subdivided into 577 sub-communities (Level 1) — and each cluster is summarised into a community report by the LLM. At query time, an <strong>LLM-based router</strong> classifies the intent as local (specific entity), global (thematic), or both, and assembles the right mix of article evidence and community reports as context for the final answer.
+      </p>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- PIPELINE -->
+    <div class="fade-up">
+      <p class="section-label">// Architecture</p>
+      <p class="section-title" style="font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:1.75rem;">Six-step pipeline</p>
+
+      <div class="pipeline-flow">
+        <div class="pipe-step">
+          <div class="pipe-num">01</div>
+          <div class="pipe-title">Extract</div>
+          <div class="pipe-desc">2-pass Gemma4 LLM: extract then review &amp; correct. 5 embedded fields per article. 2,147 JSON files.</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step">
+          <div class="pipe-num">02</div>
+          <div class="pipe-title">Clean</div>
+          <div class="pipe-desc">6 deterministic passes — normalise, remap 100+ raw types to 7 canonical, deduplicate, referential integrity.</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step">
+          <div class="pipe-num">03</div>
+          <div class="pipe-title">Build Graph</div>
+          <div class="pipe-desc">NetworkX DiGraph. MENTIONS + semantic SIMILAR_TO edges (cosine ≥ 0.85). 13,406 nodes · 32,496 edges.</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step">
+          <div class="pipe-num">04</div>
+          <div class="pipe-title">Cluster</div>
+          <div class="pipe-desc">Two-pass Leiden: L0 on full graph (74 communities), L1 on each L0 subgraph (577 sub-communities).</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step">
+          <div class="pipe-num">05</div>
+          <div class="pipe-title">Summarise</div>
+          <div class="pipe-desc">Two-phase LLM run: all text generation first (Gemma4 resident), then batch embeddings (embeddinggemma). 651 reports.</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step">
+          <div class="pipe-num">06</div>
+          <div class="pipe-title">Retrieve &amp; Answer</div>
+          <div class="pipe-desc">LLM router → cosine search → graph hop → context assembly → Gemma4 answer generation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- KEY DECISIONS -->
+    <div class="fade-up">
+      <p class="section-label">// Engineering Choices</p>
+      <p class="section-title" style="font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:1.75rem;">Four decisions that mattered</p>
+
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-label">Graph Structure</div>
+          <div class="decision-title">Two-pass Leiden over hierarchical_leiden</div>
+          <div class="decision-body">
+            The standard <code>hierarchical_leiden</code> only sub-divides communities that exceed a size threshold. On this corpus, <strong>85% of documents had no Level-1 assignment</strong>, making fine-grain retrieval impossible. Replacing it with two independent Leiden passes — one on the full graph, one on each Level-0 induced subgraph — gives genuine finer-grain coverage at both levels.
+          </div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-label">LLM Efficiency</div>
+          <div class="decision-title">Two-phase summarisation to eliminate model-swap overhead</div>
+          <div class="decision-body">
+            The original per-community approach alternated between the chat model (for text generation) and the embedding model (for vectorisation) on every community — <strong>~1,300 model-swap cycles</strong> that dominated runtime. Separating into Phase 1 (all generation, chat model stays loaded) and Phase 2 (all embeddings in batches of 32) cut this to 2 model loads total.
+          </div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-label">Query Routing</div>
+          <div class="decision-title">LLM classifier replaces brittle token heuristics</div>
+          <div class="decision-body">
+            A simple entity-name presence check would misclassify thematic queries that happen to mention known entities. The router instead sends the query plus up to <strong>5 matched entity names</strong> (ranked by length so "Tony Blair" outscores "BBC") to a few-shot LLM classifier at temperature 0, returning one of <code>local · global · both</code>. Heuristic is retained as a fallback if the LLM call fails.
+          </div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-label">Retrieval Quality</div>
+          <div class="decision-title">Level-aware global search prevents L1 from always winning</div>
+          <div class="decision-body">
+            If global search runs over all 651 community reports, Level-1 fine-grain reports systematically outscore Level-0 broad reports in cosine similarity (they are more specific, closer to any given query token). For <strong>global</strong> queries, search is restricted to <strong>L0 reports only</strong> to retrieve genuine thematic synthesis. For <strong>both</strong> queries, all levels are available.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- QUERY EXAMPLES -->
+    <div class="fade-up">
+      <p class="section-label">// Query Demo</p>
+      <p class="section-title" style="font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:0.6rem;">Three retrieval paths in action</p>
+      <p class="inline-note">Illustrative outputs showing routing logic, context assembly, and answer generation across the three paths.</p>
+
+      <!-- LOCAL -->
+      <div class="qa-block">
+        <div class="qa-header">
+          <div class="qa-query">"What did Tony Blair do regarding Iraq?"</div>
+          <div class="qa-badges">
+            <span class="badge badge-local">local</span>
+            <span class="badge badge-ent">tony blair · iraq · david kelly</span>
+          </div>
+        </div>
+        <div class="qa-meta">5 articles · 48 entity triples · 3 similar articles via SIMILAR_TO graph hop</div>
+        <div class="qa-answer">
+          Tony Blair was central to the UK's involvement in Iraq, having committed British forces to the US-led coalition in March 2003. Coverage in the graph centres on three threads: (1) the <em>September 2002 dossier</em> and the contested "45-minute claim" — that Iraq could deploy weapons of mass destruction within 45 minutes — which Blair cited in Parliament as justification for military action; (2) the death of government weapons expert <em>Dr David Kelly</em>, who had spoken to BBC journalist Andrew Gilligan, and the subsequent Hutton Inquiry; and (3) the political aftermath, in which the Hutton Report largely exonerated the government and heavily criticised the BBC's editorial standards, triggering the resignations of Director General Greg Dyke and Chairman Gavyn Davies. Across the retrieved articles, Blair consistently defended the case for military intervention while facing growing parliamentary opposition and public scepticism.
+          <div class="qa-note">Path: local · context assembled from 5 articles + 48 triples · graph-hop via MENTIONS and SIMILAR_TO edges</div>
+        </div>
+      </div>
+
+      <!-- GLOBAL -->
+      <div class="qa-block">
+        <div class="qa-header">
+          <div class="qa-query">"What are the main themes in sports coverage?"</div>
+          <div class="qa-badges">
+            <span class="badge badge-global">global</span>
+            <span class="badge badge-ent">no specific entity matched → thematic route</span>
+          </div>
+        </div>
+        <div class="qa-meta">L0 community reports 8, 12, 19 · level_filter = 0 (broad summaries only)</div>
+        <div class="qa-answer">
+          Sports coverage in the corpus is dominated by <em>football</em> — particularly Premier League club developments, the England national team, and the transfer market. Community report L0-8 identifies ownership and finance as a recurring sub-theme: Roman Abramovich's acquisition of Chelsea and the resulting spending shift restructured competitive expectations across the top flight. International football (World Cup qualifiers, Euro 2004) and individual player stories around <em>Wayne Rooney</em>, <em>David Beckham</em>'s Real Madrid tenure, and <em>Michael Owen</em> feature prominently. Beyond football, community L0-12 covers cricket (England Test tours, the county season), rugby (Six Nations, Lions), and athletics. A cross-cutting theme in L0-19 is the <em>commercialisation of sport</em>: broadcasting rights disputes, doping controversies, and the blurring of sports governance with business interests.
+          <div class="qa-note">Path: global · community reports searched at Level 0 only (74 broad reports) · level_filter=0 prevents fine-grain L1 reports from dominating</div>
+        </div>
+      </div>
+
+      <!-- BOTH -->
+      <div class="qa-block">
+        <div class="qa-header">
+          <div class="qa-query">"What is the relationship between the BBC and the government?"</div>
+          <div class="qa-badges">
+            <span class="badge badge-both">both</span>
+            <span class="badge badge-ent">bbc · government · hutton inquiry</span>
+          </div>
+        </div>
+        <div class="qa-meta">5 articles + 48 triples (local) · 3 community reports across L0 &amp; L1 (global) · level_filter = None</div>
+        <div class="qa-answer">
+          The relationship in this period was defined by the fallout from BBC political journalist Andrew Gilligan's May 2003 <em>Today</em> programme report — that Downing Street had "sexed up" the September 2002 weapons dossier to make the case for war in Iraq appear stronger than the intelligence supported. The government denied the claim and demanded a retraction; the BBC's Board of Governors refused. The subsequent death of government scientist <em>Dr David Kelly</em> — identified as Gilligan's source — triggered the <em>Hutton Inquiry</em>, which reported in January 2004 and broadly cleared the government while criticising the BBC's editorial controls. Director General <em>Greg Dyke</em> and Chairman <em>Gavyn Davies</em> resigned. At the thematic level, community reports show this episode sits within broader recurring tensions: debates over the BBC licence fee, accusations of political bias from both Conservative and Labour benches, and the question of editorial independence from government in the context of a publicly-funded broadcaster.
+          <div class="qa-note">Path: both · local path retrieves specific article evidence + entity triples · global path adds thematic community synthesis across all levels</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- EDA LINK -->
+    <div class="fade-up">
+      <p class="section-label">// Exploratory Analysis</p>
+      <p class="section-title" style="font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--white);margin-bottom:1.5rem;">Interactive EDA dashboard</p>
+      <p class="project-desc" style="margin-bottom:1.75rem;">
+        A self-contained Plotly dashboard captures six views of the graph: community size histograms per Leiden level, the L0&rarr;L1 sunburst hierarchy, community treemaps, SIMILAR_TO edge weight distribution, a force-directed network map (13,406 nodes, colourable by type or community), and a searchable table of all 651 LLM-generated community reports.
+      </p>
+      <a href="news_graph_rag_eda.html" class="eda-cta-card">
+        <div class="eda-cta-left">
+          <div class="eda-cta-label">// Interactive Dashboard</div>
+          <div class="eda-cta-title">Explore the Graph EDA</div>
+          <div class="eda-cta-desc">6 chart types &middot; 13,406 nodes &middot; 651 community reports &middot; live search &middot; Plotly</div>
+        </div>
+        <div class="eda-cta-arrow">↗</div>
+      </a>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- HIGHLIGHTS -->
+    <div class="fade-up">
+      <p class="section-label">// Highlights</p>
+      <ul class="highlights">
+        <li>End-to-end pipeline from raw CSV to interactive Q&amp;A</li>
+        <li>2-pass LLM extraction with self-review correction</li>
+        <li>6-pass deterministic entity cleanup (no LLM calls)</li>
+        <li>Two-level Leiden clustering — full corpus coverage</li>
+        <li>651 LLM community reports with 768-dim embeddings</li>
+        <li>LLM router classifies local / global / both intent</li>
+        <li>Level-aware cosine search (L0-only for global queries)</li>
+        <li>Graph-hop retrieval: MENTIONS → entity triples → SIMILAR_TO</li>
+        <li>Atomic writes throughout — interrupt-safe at every step</li>
+        <li>Interactive Plotly EDA dashboard (6 chart types)</li>
+        <li>Resumable summarisation — skips already-written reports</li>
+        <li>GCN-based embedding refinement planned as next step</li>
+      </ul>
+
+      <div class="cta-row">
+        <a href="https://github.com/chewingumex" target="_blank" class="btn btn-primary">View on GitHub ↗</a>
+        <a href="work.html" class="btn btn-ghost">← All projects</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2025 JD · Data Science Portfolio · London &amp; Mexico City</span>
+    <div class="footer-links">
+      <a href="https://github.com/chewingumex" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/jondoff/" target="_blank">LinkedIn ↗</a>
+      <a href="https://www.doctorswithoutborders.org/" target="_blank">MSF ♥</a>
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+</body>
+</html>

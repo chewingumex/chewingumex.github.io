@@ -350,6 +350,19 @@
         </div>
         <div class="eda-cta-arrow">↗</div>
       </a>
+
+      <p class="project-desc" style="margin-top:2rem; margin-bottom:1.25rem;">
+        A follow-up experiment trains a <strong>Graph Masked Autoencoder</strong> on the document–entity bipartite graph, compressing each article's 768-dim sentence embedding into a 256-dim vector that encodes not just semantic content but entity co-occurrence and community structure. Incoming queries are projected into that space via a linear map fit on the training documents. The report below benchmarks the two retrieval systems side by side — quantitatively across four intrinsic metrics and qualitatively through success and failure cases.
+      </p>
+
+      <a href="news_graph_rag_mae_retrieval.html" class="eda-cta-card" style="margin-top:0;">
+        <div class="eda-cta-left">
+          <div class="eda-cta-label">// Retrieval Comparison</div>
+          <div class="eda-cta-title">Baseline vs MAE-Enhanced Retrieval</div>
+          <div class="eda-cta-desc">Graph masked autoencoder &middot; 256-dim embeddings &middot; +6.9% community coherence &middot; success &amp; failure cases</div>
+        </div>
+        <div class="eda-cta-arrow">↗</div>
+      </a>
     </div>
 
     <div class="section-divider"></div>
@@ -369,7 +382,7 @@
         <li>Atomic writes throughout — interrupt-safe at every step</li>
         <li>Interactive Plotly EDA dashboard (6 chart types)</li>
         <li>Resumable summarisation — skips already-written reports</li>
-        <li>GCN-based embedding refinement planned as next step</li>
+        <li>Graph MAE embedding refinement — +6.9% community coherence</li>
       </ul>
 
       <div class="cta-row">

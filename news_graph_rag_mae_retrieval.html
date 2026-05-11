@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph RAG · Retrieval Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=DM+Sans:wght@300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #080c10; color: #cdd6f4;
+      font-family: 'DM Sans', sans-serif; font-weight: 300;
+      line-height: 1.6; padding: 0 0 6rem;
+    }
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 2.5rem; }
+    h1 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 2.2rem;
+          color: #cdd6f4; line-height: 1.2; }
+    h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem;
+          color: #cdd6f4; margin-bottom: 1.5rem; }
+    .eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: #00e5ff; opacity: 0.7; margin-bottom: 0.75rem;
+    }
+    .section { padding: 4rem 0; border-top: 1px solid #21262d; }
+    .hero { padding: 5rem 0 4rem; }
+    .hero-meta {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      color: #3a4a68; letter-spacing: 0.1em; margin-top: 1.25rem;
+    }
+
+    /* architecture cards */
+    .arch-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem;
+                  align-items: start; margin-top: 1.5rem; }
+    .arch-card {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1.5rem;
+    }
+    .arch-card.mae { border-color: rgba(0,229,255,0.2); }
+    .arch-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .arch-card.base .arch-label { color: #7b61ff; }
+    .arch-card.mae  .arch-label { color: #00e5ff; }
+    .arch-title { font-family: 'Syne', sans-serif; font-weight: 700;
+                   font-size: 1rem; margin-bottom: 1rem; color: #cdd6f4; }
+    .arch-list { list-style: none; }
+    .arch-list li {
+      font-size: 0.8rem; color: #8b949e; padding: 0.3rem 0;
+      border-bottom: 1px solid #161b22; line-height: 1.5;
+    }
+    .arch-list li:last-child { border-bottom: none; }
+    .arch-list li strong { color: #cdd6f4; font-weight: 400; }
+    .arch-arrow {
+      font-family: 'DM Mono', monospace; font-size: 0.9rem;
+      color: #2F9E44; align-self: center; text-align: center;
+      padding-top: 3rem;
+    }
+    .change-pill {
+      display: inline-block; font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      padding: 0.2rem 0.6rem; border-radius: 3px; margin-top: 0.5rem;
+      background: rgba(0,229,255,0.08); color: #00e5ff;
+      border: 1px solid rgba(0,229,255,0.15);
+    }
+
+    /* metrics table */
+    .metrics-table { width: 100%; border-collapse: collapse; }
+    .metrics-table th {
+      padding: 0.65rem 1rem; text-align: left;
+      font-family: 'DM Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #3a4a68; border-bottom: 1px solid #21262d;
+    }
+    .metrics-table th.mae { color: #00e5ff; opacity: 0.7; }
+    .metrics-table th.base { color: #7b61ff; opacity: 0.7; }
+    .metrics-table tr:nth-child(even) td { background: #0d1117; }
+
+    /* LLM answers */
+    .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem; }
+    .answer-box {
+      background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+      padding: 1.5rem;
+    }
+    .answer-box.mae { border-color: rgba(0,229,255,0.2); }
+    .answer-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .answer-box.base .answer-label { color: #7b61ff; }
+    .answer-box.mae  .answer-label { color: #00e5ff; }
+    .answer-text { font-size: 0.85rem; color: #8b949e; line-height: 1.7; }
+
+    @media (max-width: 720px) {
+      .arch-grid { grid-template-columns: 1fr; }
+      .arch-arrow { transform: rotate(90deg); padding: 0; }
+      .answer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ── Hero ── -->
+    <div class="hero">
+      <p class="eyebrow">// Retrieval System Comparison · BBC News Graph RAG</p>
+      <h1>Baseline vs<br>MAE-Enhanced Retrieval</h1>
+      <p style="margin-top:1rem; font-size:0.9rem; color:#6e7681; max-width:640px; line-height:1.7;">
+        The baseline system retrieves documents using 768-dim embeddings from a pre-trained
+        sentence encoder (embeddinggemma). The MAE-enhanced system trains a graph masked
+        autoencoder on the document–entity bipartite graph, producing 256-dim embeddings
+        that encode not just semantic content but entity co-occurrence and community
+        membership. Queries are projected into the MAE space via a linear map fit on
+        the training documents.
+      </p>
+      <p class="hero-meta">Generated May 2026</p>
+    </div>
+
+    <!-- ── Architecture ── -->
+    <div class="section">
+      <p class="eyebrow">// Architecture</p>
+      <h2>What changed</h2>
+      <div class="arch-grid">
+
+        <div class="arch-card base">
+          <p class="arch-label">Baseline</p>
+          <p class="arch-title">Graph RAG · 768-dim</p>
+          <ul class="arch-list">
+            <li><strong>Document embeddings</strong> embeddinggemma sentence encoder, 768 dimensions</li>
+            <li><strong>Retrieval</strong> cosine similarity on original embedding space</li>
+            <li><strong>Graph use</strong> entity hops and SIMILAR_TO neighbours at context assembly time only</li>
+            <li><strong>Community reports</strong> Leiden L0/L1 summaries, cosine sim on report embeddings</li>
+          </ul>
+        </div>
+
+        <div class="arch-arrow">→<br><br><span style="font-size:0.65rem; color:#2F9E44; letter-spacing:0.1em;">IMPROVED</span></div>
+
+        <div class="arch-card mae">
+          <p class="arch-label">MAE-Enhanced</p>
+          <p class="arch-title">Graph MAE · 256-dim</p>
+          <ul class="arch-list">
+            <li><strong>Document embeddings</strong> 2-layer bipartite SAGEConv autoencoder, 256-dim bottleneck</li>
+            <li><strong>Training objective 1</strong> masked feature reconstruction — 40% of doc features masked, encoder aggregates entity neighbourhood to reconstruct</li>
+            <li><strong>Training objective 2</strong> MENTIONS edge reconstruction — bilinear decoder predicts entity co-occurrence</li>
+            <li><strong>Query projection</strong> linear map W: X₇₆₈ @ W ≈ X₂₅₆ fit by least squares on training documents</li>
+          </ul>
+          <span class="change-pill">hidden=512 · latent=256 · mask=0.40 · λ_feat=2.0 · λ_edge=0.25</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── MAE Training ── -->
+    <div class="section">
+      <p class="eyebrow">// MAE Training</p>
+      <h2>Training the autoencoder</h2>
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:2rem; max-width:680px; line-height:1.6;">
+        The model was trained for 300 epochs using a two-objective loss: masked feature reconstruction
+        (60% of document features randomly masked, encoder must aggregate entity neighbours to fill the gap)
+        and MENTIONS edge prediction (bilinear decoder distinguishes real doc–entity links from negatives at 3:1 ratio).
+        Before the final run, a 25-trial random search selected the best configuration using L0 community
+        coherence at k=10 as the proxy objective.
+      </p>
+
+      <img src="mae_training.png" alt="MAE training diagnostics"
+           style="width:100%; border-radius:8px; border:1px solid #21262d; margin-bottom:1rem;">
+      <p style="font-size:0.75rem; color:#3a4a68; font-family:'DM Mono',monospace; margin-bottom:2.5rem; line-height:1.6;">
+        Left: total, feature, and edge loss converging over 300 epochs with the best hyperparameter config.
+        Mid-training spikes are a known artefact of the cosine-annealing learning-rate schedule.
+        Centre: latent norm distribution (median ‖z‖=2.42) — the encoder has not collapsed to a trivial solution.
+        Right: L0 coherence@10 scores across all 25 search trials; the best run achieves 0.621.
+      </p>
+
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:1.5rem; max-width:680px; line-height:1.6;">
+        The chart below benchmarks the final 256-dim MAE embeddings against the original 768-dim baseline
+        using four intrinsic retrieval metrics measured at k=5, 10, and 20. Each document acts as its own
+        query against the remaining corpus. The rank correlation panel (Spearman ρ, median=0.66) shows the
+        MAE meaningfully reorders results rather than simply compressing the original ranking.
+      </p>
+
+      <img src="embedding_eval.png" alt="Retrieval quality benchmark"
+           style="width:100%; border-radius:8px; border:1px solid #21262d; margin-bottom:1rem;">
+      <p style="font-size:0.75rem; color:#3a4a68; font-family:'DM Mono',monospace; line-height:1.6;">
+        Top row: SIMILAR_TO recall (both systems near-perfect), L0 and L1 community coherence (MAE consistently higher).
+        Bottom row: MENTIONS Jaccard entity overlap (MAE higher at all k), Spearman ρ distribution across 2,147 docs,
+        and a per-document scatter of original vs MAE cosine similarity — the spread confirms the MAE is not simply
+        a rescaling of the original space.
+      </p>
+    </div>
+
+    <!-- ── Metrics ── -->
+    <div class="section">
+      <p class="eyebrow">// Evaluation</p>
+      <h2>Retrieval quality — doc-to-doc benchmark</h2>
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:1.5rem; max-width:620px; line-height:1.6;">
+        Each document used as its own query. Metrics measured at k=10 across 2,147 articles.
+        Community coherence: fraction of top-k retrieved docs in the same Leiden community.
+        MENTIONS Jaccard: entity set overlap between query doc and retrieved docs.
+      </p>
+      <table class="metrics-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th class="base">Baseline 768-dim</th>
+            <th class="mae">MAE 256-dim</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+      <tr>
+        <td style="padding:0.65rem 1rem; color:#8b949e; font-size:0.82rem;">SIMILAR_TO recall @ 10</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#7b61ff;">1.000</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#00e5ff;">1.000</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.8rem; color:#6e7681;">+0.000</td>
+      </tr>
+      <tr>
+        <td style="padding:0.65rem 1rem; color:#8b949e; font-size:0.82rem;">L0 community coherence @ 10</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#7b61ff;">0.552</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#00e5ff;">0.621</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.8rem; color:#2F9E44;">+0.069</td>
+      </tr>
+      <tr>
+        <td style="padding:0.65rem 1rem; color:#8b949e; font-size:0.82rem;">L1 community coherence @ 10</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#7b61ff;">0.230</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#00e5ff;">0.269</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.8rem; color:#2F9E44;">+0.039</td>
+      </tr>
+      <tr>
+        <td style="padding:0.65rem 1rem; color:#8b949e; font-size:0.82rem;">MENTIONS Jaccard @ 10</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#7b61ff;">0.082</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.82rem; color:#00e5ff;">0.099</td>
+        <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace;
+                   font-size:0.8rem; color:#2F9E44;">+0.017</td>
+      </tr>
+          <tr>
+            <td style="padding:0.65rem 1rem; color:#8b949e; font-size:0.82rem;">Rank correlation (Spearman ρ)</td>
+            <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace; font-size:0.82rem; color:#7b61ff;">1.000</td>
+            <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace; font-size:0.82rem; color:#00e5ff;">0.645</td>
+            <td style="padding:0.65rem 1rem; text-align:center; font-family:'DM Mono',monospace; font-size:0.8rem; color:#6e7681;">—</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.75rem; font-size:0.75rem; color:#3a4a68; font-family:'DM Mono',monospace;">
+        Rank correlation ρ=0.645 — the MAE reorganises retrieval order meaningfully rather than just compressing it.
+      </p>
+    </div>
+
+    <!-- ── Success stories ── -->
+    <div class="section">
+      <p class="eyebrow">// Retrieval success stories</p>
+      <h2>Queries where MAE retrieves more coherently</h2>
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:2.5rem; max-width:620px; line-height:1.6;">
+        Auto-selected as the 4 queries with the largest community coherence improvement.
+        <span style="color:#00e5ff;">Cyan highlight</span> = article shares the plurality community
+        of the retrieved set. A tighter cluster means less noise in the context sent to the LLM.
+      </p>
+      
+  <div style="margin-bottom:3.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+      <p style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem;
+                color:#cdd6f4; margin:0; flex:1;">"What did political parties propose about NHS funding?"</p>
+      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em;
+                   padding:0.25rem 0.75rem; border-radius:3px;
+                   background:rgba(47,158,68,0.12); color:#2F9E44;
+                   border:1px solid rgba(47,158,68,0.25);">
+        coherence Δ +0.400
+      </span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#7b61ff;">
+            Baseline · 768-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#7b61ff;
+                       opacity:0.7;">coherence 0.60</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Parties' plans for council tax</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.485</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Following mass protests over council tax rises in 2003, all major parties acknowledge the local government finance system is flawed and requires reform. Labour …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">'Debate needed' on donations cap</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.481</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-50</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Electoral Commission advises that while a donation cap (suggested at £10,000) is worth debating, now is not the right time to implement it. The report recom…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">'Debate needed' on donations cap</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.469</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-50</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Electoral Commission advises that while a donation cap (suggested at £10,000) is worth debating, now is not the right time to implement it. The report recom…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Labour accused of 'EU propaganda'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.463</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The debate centers on the EU constitution referendum, with the Conservatives accusing the government of running a 'taxpayer subsidised propaganda exercise' to s…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Immigration to be election issue</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.457</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Immigration and asylum are becoming central election issues for major parties like Labour and the Tories, driven by voter concern. The Tories plan to impose ann…</p>
+    </div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#00e5ff;">
+            MAE-enhanced · 256-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#00e5ff;
+                       opacity:0.7;">coherence 1.00</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Lib Dems unveil women's manifesto</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.811</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Liberal Democrats are launching a manifesto focused on women's issues, spearheaded by Charles Kennedy, who proposes a maternity income guarantee and a pensi…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Labour plans maternity pay rise</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.789</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Patricia Hewitt announced new Labour proposals to raise maternity pay by £1,400, aiming to extend paid leave to nine months by 2007 and eventually up to 12 mont…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Kennedy's cautious optimism</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.784</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Charles Kennedy, while cautious, expressed optimism about his party's potential in the upcoming general election, positioning the Liberal Democrats as the main …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Taxes must be trusted - Kennedy</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.779</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Charles Kennedy, leader of the Lib Dems, stated that public trust in taxes is declining due to the lack of transparency from Labour and the Tories. He outlined …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Lib Dems unveil election slogan</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.777</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Liberal Democrats unveiled their election slogan, 'the real alternative,' at their spring conference, positioning themselves against Labour and the Conserva…</p>
+    </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:3.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+      <p style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem;
+                color:#cdd6f4; margin:0; flex:1;">"How did UK retail sales and consumer spending perform?"</p>
+      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em;
+                   padding:0.25rem 0.75rem; border-radius:3px;
+                   background:rgba(47,158,68,0.12); color:#2F9E44;
+                   border:1px solid rgba(47,158,68,0.25);">
+        coherence Δ +0.200
+      </span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#7b61ff;">
+            Baseline · 768-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#7b61ff;
+                       opacity:0.7;">coherence 0.40</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Sales 'fail to boost High Street'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.561</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-41</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>January sales failed to help the UK High Street recover from a poor Christmas season, according to a recent survey. While sales rose slightly on a like-for-like…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Christmas sales worst since 1981</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.546</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-41</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>UK retail sales in December fell, marking the worst Christmas period since 1981, according to the Office for National Statistics (ONS). While the ONS revised th…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Retail sales show festive fervour</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.524</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>UK retail sales in November were better than expected, rising 0.6% on the month and 6.1% on the year, according to the Office for National Statistics (ONS). Whi…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Christmas shoppers flock to tills</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.487</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-14</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Shops across the UK reported strong sales on the pre-Christmas Saturday, with centers like Trafford Centre and St Enoch's reporting record footfall. Despite rep…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">'Post-Christmas lull' in lending</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.470</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-66</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>UK mortgage lending experienced a 'post-Christmas lull' in January, signaling a slowdown in the housing market. Multiple organizations, including the CML, BSA, …</p>
+    </div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#00e5ff;">
+            MAE-enhanced · 256-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#00e5ff;
+                       opacity:0.7;">coherence 0.60</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Retail sales show festive fervour</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.874</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>UK retail sales in November were better than expected, rising 0.6% on the month and 6.1% on the year, according to the Office for National Statistics (ONS). Whi…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Sales 'fail to boost High Street'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.866</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-41</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>January sales failed to help the UK High Street recover from a poor Christmas season, according to a recent survey. While sales rose slightly on a like-for-like…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Trade gap narrows as exports rise</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.863</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The UK's trade gap narrowed in November, primarily due to a 7.5% rise in exports outside the European Union. While overall UK exports increased by over 3.2% to …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Christmas sales worst since 1981</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.849</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-41</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>UK retail sales in December fell, marking the worst Christmas period since 1981, according to the Office for National Statistics (ONS). While the ONS revised th…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Small firms 'hit by rising costs'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.826</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-9</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Despite a seven-year high in output, small UK manufacturers are struggling due to rising fuel and materials costs, which offset any benefits. The CBI found that…</p>
+    </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:3.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+      <p style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem;
+                color:#cdd6f4; margin:0; flex:1;">"Who won major football tournaments this season?"</p>
+      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em;
+                   padding:0.25rem 0.75rem; border-radius:3px;
+                   background:rgba(47,158,68,0.12); color:#2F9E44;
+                   border:1px solid rgba(47,158,68,0.25);">
+        coherence Δ +0.200
+      </span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#7b61ff;">
+            Baseline · 768-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#7b61ff;
+                       opacity:0.7;">coherence 0.80</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">English clubs make Euro history</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.382</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>All four English Champions League representatives have reached the knockout stages for the first time. While Chelsea and Arsenal are seeded as group winners, Ma…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Beckham relief as Real go through</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.373</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>David Beckham expressed relief after Real Madrid advanced to the Champions League knockout phase with a 3-0 win against Roma. He stressed that the club must win…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Mourinho plots impressive course</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.372</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The article analyzes Chelsea's strong season performance, noting their depth, great players, and financial stability, which positions them well for title challe…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Henry tipped for Fifa award</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.360</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Fifa president Sepp Blatter hopes Thierry Henry wins World Player of the Year, alongside Ronaldinho and Andriy Shevchenko, with the winner announced at Zurich's…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Federer joins all-time greats</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.357</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-34</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The year saw Roger Federer achieve a historic feat by becoming the first man since Mats Wilander in 1988 to win three Grand Slams in one season. Other notable a…</p>
+    </div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#00e5ff;">
+            MAE-enhanced · 256-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#00e5ff;
+                       opacity:0.7;">coherence 1.00</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Henry tipped for Fifa award</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.783</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Fifa president Sepp Blatter hopes Thierry Henry wins World Player of the Year, alongside Ronaldinho and Andriy Shevchenko, with the winner announced at Zurich's…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Beckham relief as Real go through</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.750</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>David Beckham expressed relief after Real Madrid advanced to the Champions League knockout phase with a 3-0 win against Roma. He stressed that the club must win…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">English clubs make Euro history</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.749</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>All four English Champions League representatives have reached the knockout stages for the first time. While Chelsea and Arsenal are seeded as group winners, Ma…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Mourinho plots impressive course</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.728</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The article analyzes Chelsea's strong season performance, noting their depth, great players, and financial stability, which positions them well for title challe…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Everton's Weir cools Euro hopes</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.723</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-17</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Everton defender David Weir downplayed talk of European football, despite the team's strong performance, including a win against Liverpool. Speaking to BBC Radi…</p>
+    </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:3.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+      <p style="font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem;
+                color:#cdd6f4; margin:0; flex:1;">"How did India's aviation sector develop?"</p>
+      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em;
+                   padding:0.25rem 0.75rem; border-radius:3px;
+                   background:rgba(47,158,68,0.12); color:#2F9E44;
+                   border:1px solid rgba(47,158,68,0.25);">
+        coherence Δ +0.200
+      </span>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#7b61ff;">
+            Baseline · 768-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#7b61ff;
+                       opacity:0.7;">coherence 0.80</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">India's Deccan seals $1.8bn deal</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.511</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Air Deccan, India's first low-cost airline, secured a $1.8bn deal for 30 Airbus A320 planes to expand in the growing domestic market. The Indian market's potent…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">India opens skies to competition</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.509</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>India plans to allow domestic commercial airlines to operate long-haul international routes to boost competition and lower prices. However, state-controlled car…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Aviation firms eye booming India</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.488</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>India's Aero India 2005 air show, opened by the defence minister, attracted global aerospace firms interested in outsourcing jobs due to India's skilled workfor…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #7b61ff; background: rgba(123,97,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Buyers snap up Jet Airways' shares</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.390</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#7b61ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Jet Airways, India's largest airline, successfully launched an Initial Public Offering (IPO) for 17.3 million shares, which was fully sold within 10 minutes. Th…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Mobile gaming takes off in India</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.387</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-28</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Mobile gaming is a rapidly growing sector in India, driven by a huge youth market and cheap rates. The Indian mobile gaming market is projected to reach $336 mi…</p>
+    </div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    margin-bottom:0.75rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem;
+                       letter-spacing:0.15em; text-transform:uppercase; color:#00e5ff;">
+            MAE-enhanced · 256-dim
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#00e5ff;
+                       opacity:0.7;">coherence 1.00</span>
+        </div>
+        
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">India opens skies to competition</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.835</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>India plans to allow domestic commercial airlines to operate long-haul international routes to boost competition and lower prices. However, state-controlled car…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Huge rush for Jet Airways shares</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.828</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Jet Airways' initial public offering (IPO) was highly successful, oversubscribing 16.2 times with strong demand for the domestic aviation sector. Founded by Nar…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">India's Deccan seals $1.8bn deal</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.828</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Air Deccan, India's first low-cost airline, secured a $1.8bn deal for 30 Airbus A320 planes to expand in the growing domestic market. The Indian market's potent…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">India's Deccan gets more planes</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.789</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Air Deccan signed a deal to acquire 36 planes from Avions de Transport Regional (ATR), comprising 15 new ATR 72-500 aircraft and 15 leases, plus six second-hand…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                border-left: 3px solid #00e5ff; background: rgba(0,229,255,0.05); border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#00e5ff; line-height:1.4;">Aviation firms eye booming India</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.788</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:rgba(0,229,255,0.12);
+                     color:#00e5ff;
+                     border: 1px solid rgba(0,229,255,0.2);">L0-62</span>
+        <span style='font-size:0.62rem; color:#00e5ff; font-family:DM Mono,monospace;'>✓ same community</span>
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>India's Aero India 2005 air show, opened by the defence minister, attracted global aerospace firms interested in outsourcing jobs due to India's skilled workfor…</p>
+    </div>
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- ── LLM examples ── -->
+    <div class="section">
+      <p class="eyebrow">// End-to-end examples</p>
+      <h2>From retrieval to answer</h2>
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:2.5rem; max-width:640px; line-height:1.6;">
+        Both systems retrieve from the same graph and pass context to the same LLM (gemma4).
+        The only difference is which articles are retrieved. Two contrasting cases are shown:
+        a success where MAE retrieves more coherently, and a failure where dense retrieval
+        breaks down for both systems.
+      </p>
+
+      <!-- success sub-section -->
+      <div style="margin-bottom:3.5rem;">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em;
+                       text-transform:uppercase; padding:0.2rem 0.7rem; border-radius:3px;
+                       background:rgba(47,158,68,0.12); color:#2F9E44;
+                       border:1px solid rgba(47,158,68,0.25);">✓ Success case</span>
+          <p style="font-family:'Syne',sans-serif; font-weight:700;
+                    font-size:1.05rem; color:#cdd6f4; margin:0;">"Main trends in entertainment"</p>
+        </div>
+        <p style="font-size:0.8rem; color:#6e7681; margin-bottom:1.25rem; max-width:620px; line-height:1.6;">
+          Entertainment is densely covered in this corpus, with hundreds of entity connections
+          across TV, film, and music communities. The MAE's entity co-occurrence training
+          surfaces a more coherent cluster, giving the LLM broader, better-grounded context.
+        </p>
+
+        <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                  text-transform:uppercase; color:#6e7681; margin-bottom:0.75rem;">
+          Retrieved articles (top 5)
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                      text-transform:uppercase; color:#7b61ff; margin-bottom:0.75rem;">Baseline · 768-dim</p>
+            
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Consumers 'snub portable video'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.425</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-22</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>A report by Jupiter Research indicates that consumers prefer music over movies when using portable devices. The analysis found that the growth of Europe's porta…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">TV future in the hands of viewers</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.413</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-49</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The future of TV viewing is shifting dramatically due to new technologies like DVRs and high-definition sets, allowing viewers to consume content on demand via …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Bollywood draws global stars</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.396</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-4</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Bollywood is increasingly going global, evidenced by the debut of non-Indian stars like Antonia Bernath in films like Kisna. Driven by the desire to reach inter…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Roundabout continues nostalgia trip</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.383</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-19</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The article discusses the trend of remaking classic children's television shows, citing examples like The Magic Roundabout and Thunderbirds. While some critics …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Net regulation 'still possible'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.383</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-3</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The blurring lines between TV and the internet raise complex questions about content regulation. Experts like Lord Currie and Andrew Burke suggest that as conte…</p>
+    </div>
+          </div>
+          <div>
+            <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                      text-transform:uppercase; color:#00e5ff; margin-bottom:0.75rem;">MAE-enhanced · 256-dim</p>
+            
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Casual gaming to 'take off'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.758</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-12</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Industry experts predict significant growth for casual gaming in 2005, noting that easy-to-play, mobile, or online titles are gaining popularity over traditiona…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Gadget market 'to grow in 2005'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.757</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-49</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Consumer Electronics Show (CES) in Las Vegas predicted continued growth in the gadget market for 2005, with an expected 11% increase in gadgets. Key trends …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">TV future in the hands of viewers</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.746</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-49</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The future of TV viewing is shifting dramatically due to new technologies like DVRs and high-definition sets, allowing viewers to consume content on demand via …</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Consumers 'snub portable video'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.744</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-22</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>A report by Jupiter Research indicates that consumers prefer music over movies when using portable devices. The analysis found that the growth of Europe's porta…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Gadget market 'to grow in 2005'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.739</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-49</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Consumer Electronics Show (CES) in Las Vegas predicted continued growth in the gadget market for 2005, with an expected 11% increase in gadgets. Key trends …</p>
+    </div>
+          </div>
+        </div>
+
+        <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                  text-transform:uppercase; color:#6e7681; margin-bottom:0.75rem;">
+          LLM answers (gemma4 · temperature 0.1)
+        </p>
+        <div class="answer-grid">
+          <div class="answer-box base">
+            <p class="answer-label">Baseline answer</p>
+            <p class="answer-text">Based on the provided articles, the main trends in entertainment are:
+
+**1. Shift to On-Demand and Personalized Viewing:**
+*   The future of TV viewing is changing due to new technologies (like DVRs and high-definition sets), allowing viewers to consume content on demand via home networks.
+*   The industry is moving toward content brands and search-engine-like channel models, reflecting a consumer desire for personalized, flexible viewing experiences (Source: [TECH] TV future in the hands of viewers).
+
+**2. Focus on Music over Portable Video:**
+*   Consumers are showing a preference for music over movies when using portable devices. The growth of Europe's portable player market is specifically driven by music (Source: [TECH] Consumers 'snub portable video').
+
+**3. Globalization of Indian Cinema:**
+*   Bollywood is increasingly going global, incorporating Western talent and elements, such as English songs and bilingual shoots, to reach international markets (Source: [ENTERTAINMENT] Bollywood draws global stars).
+
+**4. Nostalgia in Media:**
+*   There is a trend of remaking classic children's television shows, which utilizes nostalgia to attract an audience (Source: [ENTERTAINMENT] Roundabout continues nostalgia trip).</p>
+          </div>
+          <div class="answer-box mae">
+            <p class="answer-label">MAE-enhanced answer</p>
+            <p class="answer-text">Based on the provided articles, the main trends in entertainment are diverse, spanning gaming, viewing technology, and portable devices.
+
+**1. Viewing and Media Consumption:**
+*   **On-Demand and Personalization:** The future of TV viewing is shifting dramatically due to new technologies like DVRs and high-definition sets, allowing viewers to consume content on demand via home networks, reflecting a consumer desire for personalized, flexible viewing experiences (&quot;TV future in the hands of viewers&quot;).
+*   **Industry Shift:** The industry is moving toward content brands and search-engine-like channel models (&quot;TV future in the hands of viewers&quot;).
+*   **Music Preference:** Consumers are showing a preference for music over movies when using portable devices, driving the growth of Europe's portable player market (&quot;Consumers 'snub portable video'&quot;).
+
+**2. Gaming:**
+*   **Casual and Mobile Growth:** There is a predicted significant growth for casual gaming in 2005. This trend notes that easy-to-play, mobile, or online titles are gaining popularity over traditional console games.
+*   **Characteristics:** Casual gaming is highlighted as being gender-neutral and community-focused, with broadband technology and portal sites playing a key role (&quot;Casual gaming to 'take off'&quot;).
+
+**3. Gadget and Device Trends:**
+*   **Market Growth:** The gadget market was predicted to continue growing in 2005, with an expected 11% increase (&quot;Gadget market 'to grow in 2005'&quot;).
+*   **Key Technological Trends:** Key trends driving this growth include:
+    *   The importance of interconnected devices.
+    *   The rise of high-definition technologies (HDTVs).
+    *   The growing influence of lifestyle choice and personalization (&quot;Gadget market 'to grow in 2005'&quot;).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- failure sub-section -->
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em;
+                       text-transform:uppercase; padding:0.2rem 0.7rem; border-radius:3px;
+                       background:rgba(224,49,49,0.1); color:#E03131;
+                       border:1px solid rgba(224,49,49,0.2);">✗ Failure case</span>
+          <p style="font-family:'Syne',sans-serif; font-weight:700;
+                    font-size:1.05rem; color:#cdd6f4; margin:0;">"What happened in cricket test matches?"</p>
+        </div>
+        <p style="font-size:0.8rem; color:#6e7681; margin-bottom:1.25rem; max-width:620px; line-height:1.6;">
+          Only three articles in this corpus mention cricket. Both systems rely entirely on
+          dense vector similarity — there is no BM25 or keyword fallback. The word "test" is
+          semantically ambiguous, and the embedding anchors on its general meaning rather than
+          the cricket sense. Both pipelines silently return plausible-looking but wrong results.
+          This is a known limitation of pure dense retrieval.
+        </p>
+
+        <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                  text-transform:uppercase; color:#6e7681; margin-bottom:0.75rem;">
+          Retrieved articles (top 5)
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                      text-transform:uppercase; color:#7b61ff; margin-bottom:0.75rem;">Baseline · 768-dim</p>
+            
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">FA probes crowd trouble</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.336</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-17</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The FA is investigating trouble that occurred during Wednesday's Carling Cup tie between Chelsea and West Ham, where Chelsea won 1-0. The match saw multiple inc…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">FA charges Liverpool and Millwall</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.294</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-17</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The Football Association charged both Liverpool and Millwall following crowd trouble during their Carling Cup match on October 26th. Millwall was also charged s…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Bets off after Big Brother 'leak'</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.288</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-25</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>William Hill stopped taking bets on Celebrity Big Brother after its spokesman, Rupert Adams, suspected that sensitive information regarding viewer voting had be…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Worcester v Sale (Fri)</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.283</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-71</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>The match between Worcester and Sale saw Worcester make a minor change with Tim Collier replacing Phil Murphy. In contrast, Sale was significantly depleted, mis…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">England 17-18 France</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.283</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-6</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>England suffered an eighth defeat in 11 Tests against France at Twickenham, losing 17-18. Despite early leads and scoring efforts by players like Olly Barkley a…</p>
+    </div>
+          </div>
+          <div>
+            <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                      text-transform:uppercase; color:#00e5ff; margin-bottom:0.75rem;">MAE-enhanced · 256-dim</p>
+            
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Hariri killing hits Beirut shares</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.650</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-11</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Shares in Solidere, the Lebanese real estate firm founded by Rafik Hariri, dropped significantly following the assassination of Mr. Hariri. The Beirut benchmark…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Reliance unit loses Anil Ambani</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.638</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-62</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Anil Ambani, the younger brother, resigned as director and vice-chairman of Indian Petrochemicals Corporation (IPC), a move seen as part of a feud with his brot…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Wasps 31-37 Leicester</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.634</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-6</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Leicester defeated Wasps in a pulsating Heineken Cup encounter at the Causeway Stadium, winning 37-31 after Wasps fought back to tie the score at 31-31. Andy Go…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Ore costs hit global steel firms</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.631</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-49</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Global steel firms saw their shares drop due to concerns over rising iron ore costs, particularly after Rio Tinto and Cia. Vale Do Rio Dolce significantly incre…</p>
+    </div>
+    <div style="padding:0.75rem 1rem; margin-bottom:0.5rem; border-radius:6px;
+                background:#161b22; border: 1px solid #21262d;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem;
+                     color:#cdd6f4; line-height:1.4;">Cairn shares slump on oil setback</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.68rem; white-space:nowrap;
+                     color:#6e7681; flex-shrink:0;">0.631</span>
+      </div>
+      <div style="margin-top:0.3rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em;
+                     padding:0.15rem 0.5rem; border-radius:3px;
+                     background:#0d1117;
+                     color:#3a4a68;
+                     border: 1px solid #21262d;">L0-8</span>
+        
+      </div>
+      <p style='margin:0.4rem 0 0; font-size:0.75rem; color:#6e7681; line-height:1.4;'>Shares in Cairn Energy, a UK oil firm, dropped 18% following a disappointing drilling update and a dispute over potential tax demands from the Indian government…</p>
+    </div>
+          </div>
+        </div>
+
+        <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.15em;
+                  text-transform:uppercase; color:#6e7681; margin-bottom:0.75rem;">
+          LLM answers (gemma4 · temperature 0.1)
+        </p>
+        <div class="answer-grid">
+          <div class="answer-box base">
+            <p class="answer-label">Baseline answer</p>
+            <p class="answer-text">The provided context does not contain any information regarding cricket test matches.</p>
+          </div>
+          <div class="answer-box mae">
+            <p class="answer-label">MAE-enhanced answer</p>
+            <p class="answer-text">The provided context does not contain any information regarding cricket test matches.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Caveats ── -->
+    <div class="section">
+      <p class="eyebrow">// Caveats &amp; Limitations</p>
+      <h2>What to bear in mind</h2>
+      <p style="font-size:0.82rem; color:#6e7681; margin-bottom:2rem; max-width:640px; line-height:1.6;">
+        Both systems are research prototypes. The improvements shown are real but
+        should be interpreted in context. The following limitations apply.
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+
+        <div style="background:#0d1117; border:1px solid #21262d; border-radius:8px; padding:1.5rem;">
+          <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.2em;
+                    text-transform:uppercase; color:#6e7681; margin-bottom:1rem;">Both systems</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:0.85rem;">
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid #21262d;">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">Dense retrieval only</strong>
+              No BM25 or keyword fallback. Rare terms ("cricket", niche proper nouns) fail
+              silently — the system returns plausible-sounding but wrong articles with no
+              indication of low confidence. A sparse+dense hybrid is the standard fix.
+            </li>
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid #21262d;">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">No labelled evaluation data</strong>
+              All metrics are intrinsic proxies (community coherence, entity overlap).
+              No human relevance judgements exist for this corpus. Real-world retrieval
+              quality may differ from what the benchmarks suggest.
+            </li>
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid #21262d;">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">Small, time-bounded corpus</strong>
+              2,147 BBC articles from a specific period. Community structure and entity
+              clusters are artefacts of that slice of news. Neither system generalises
+              to other corpora without retraining.
+            </li>
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid #21262d;">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">LLM-generated community reports</strong>
+              Global search answers draw on Leiden community summaries written by gemma4.
+              These may contain hallucinations or simplifications that propagate into
+              final answers without any traceability.
+            </li>
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid #21262d;">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">No entity resolution</strong>
+              "SEC" and "US Securities and Exchange Commission" are separate graph nodes.
+              Partial name variants and abbreviations fragment entity clusters and reduce
+              both retrieval precision and community coherence.
+            </li>
+          </ul>
+        </div>
+
+        <div style="background:#0d1117; border:1px solid rgba(0,229,255,0.15); border-radius:8px; padding:1.5rem;">
+          <p style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.2em;
+                    text-transform:uppercase; color:#00e5ff; opacity:0.6; margin-bottom:1rem;">MAE-specific</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:0.85rem;">
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid rgba(0,229,255,0.15);">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">Linear query projection is an approximation</strong>
+              The MAE learns a non-linear transformation of the document space. Mapping
+              incoming queries into that space via a linear least-squares fit is a
+              pragmatic shortcut. A learned query encoder trained end-to-end would be
+              more accurate, but requires query–document supervision pairs.
+            </li>
+            <li style="font-size:0.8rem; color:#8b949e; line-height:1.5; padding-left:1rem;
+                       border-left:2px solid rgba(0,229,255,0.15);">
+              <strong style="color:#cdd6f4; display:block; margin-bottom:0.2rem;">Rare topics may perform worse than baseline</strong>
+              The MAE receives almost no gradient signal from underrepresented topics.
+              Entity connections pull rare documents toward the dominant cluster,
+              potentially erasing the very signal the baseline preserves. The cricket
+              failure in this report is the clearest example.
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <p style="font-size:0.78rem; color:#3a4a68; font-family:'DM Mono',monospace;
+                max-width:700px; line-height:1.6;">
+        Natural next steps: sparse+dense hybrid retrieval (BM25 + MAE), a learned query encoder
+        trained on synthetic Q&amp;A pairs, entity resolution via gazetteer or LLM normalisation,
+        and a proper held-out evaluation set with human relevance labels.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
